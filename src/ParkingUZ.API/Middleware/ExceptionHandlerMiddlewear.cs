@@ -1,5 +1,5 @@
-﻿using Airways.Application.Exceptions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using ParkingUZ.Application.Exceptions;
 using ParkingUZ.Application.Models;
 using ParkingUZ.Core.Common;
 using ParkingUZ.Core.Exceptions;

@@ -9,12 +9,14 @@ namespace ParkingUZ.Core.Entities
         public decimal DiscountPercent { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public Guid ParkingLotId { get; set; }
-        public ParkingLot ParkingLot { get; set; }
+        public Guid ParkingZoneId { get; set; }
+        public ParkingZone ParkingZone { get; set; }
+        public bool IsActive => DateTime.UtcNow >= StartDate
+            && DateTime.UtcNow <= EndDate;
 
-        public string? CreatedBy { get; set; }
+        public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public string? UpdatedBy { get; set; }
+        public string UpdatedBy { get; set; }
         public DateTime? UpdatedOn { get; set; }
     }
 }

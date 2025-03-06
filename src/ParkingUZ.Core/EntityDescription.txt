@@ -1,1 +1,18 @@
-﻿
+﻿1. User : Foydalanuvchilar ma’lumotlarini saqlaydi.
+2. ParkingZone : Parkovka joylarini saqlaydi.
+3. ParkingSpot : Parkovkada mavjud individual joylarni saqlaydi.
+4. Reservation : Foydalanuvchilar parkovka joyini bron qilganini saqlaydi.
+5. QRCode : Foydalanuvchilarning bronlangan joyga kirishi uchun QR-kodlarni saqlaydi.
+6. Payment : Parkovka uchun qilingan to‘lovlarni saqlaydi.
+7. ParkingHistory : Foydalanuvchilar parkovkaga kirib-chiqqan vaqtlarini saqlaydi.
+8. Review : Foydalanuvchilar parkovka hududlari haqida fikr-mulohaza bildirishi uchun ishlatiladi.
+9. PricingPlan : Parkovkada turli narxlash rejalari mavjud.
+10. ParkingLotPricing : Har bir parkovka uchun narxlash rejalarini bog‘laydi.
+11. Discount : Parkovkada qo‘llanadigan chegirmalarni saqlaydi.
+
+12. PayStatus : To‘lov holatlarini saqlovchi ENUM jadvali.
+13. SpotStatus : Har bir parkovka joyining holatini bildiradi.
+14. Tariff : Parkovkada turli to‘lov tariflari mavjud.
+15. ReservationStatus : Joyning bandlik holatini belgilaydi.
+16. CardType : Karta turini tanlash
+17. City : shaxarlar ro'yxatini saqlaydi

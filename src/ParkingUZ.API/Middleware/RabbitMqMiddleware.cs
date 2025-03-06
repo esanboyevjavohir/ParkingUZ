@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace Airways.API.Middleware
+namespace ParkingUZ.API.Middleware
 {
     public class RabbitMqMiddleware
     {

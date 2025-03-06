@@ -1,4 +1,4 @@
-using Airways.DataAccess.Authentication;
+using ParkingUZ.DataAccess.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -7,6 +7,9 @@ using ParkingUZ.API.Filters;
 using ParkingUZ.API.Middleware;
 using ParkingUZ.DataAccess.Persistence;
 using System.Text;
+using ParkingUZ.Shared.Services.Impl;
+using ParkingUZ.Shared.Services;
+using ParkingUZ.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +31,8 @@ builder.Services.AddSwagger();
 builder.Services.Configure<JwtOption>(builder.Configuration.GetSection("JwtOptions"));
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddDataAccess(builder.Configuration);
+
 
 builder.Services.AddAuthorization(options =>
 {

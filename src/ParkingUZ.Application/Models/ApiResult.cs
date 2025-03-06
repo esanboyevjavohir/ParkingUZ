@@ -72,7 +72,7 @@ namespace ParkingUZ.Application.Models
             => new ApiResult<TValue>(value, successMessage, true, Errors.None);
 
         // Create a failure result with an error
-        public static ApiResult<TValue> Failure(Errors error, string? failureMessage = null)
+        public static ApiResult<TValue>     Failure(Errors error, string? failureMessage = null)
             => new ApiResult<TValue>(default, failureMessage, false, error);
 
         // Create a ApiResult<TValue> from a nullable value

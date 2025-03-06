@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Airways.API.Middleware
+namespace ParkingUZ.API.Middleware
 {
     public class PerformanceMiddleware
     {

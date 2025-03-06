@@ -11,7 +11,7 @@ namespace ParkingUZ.API
         {
             var secretKey = configuration.GetValue<string>("JwtOptions:SecretKey");
 
-            var key = Encoding.ASCII.GetBytes(secretKey);
+            var key = Encoding.ASCII.GetBytes(secretKey!);
 
             services.AddAuthentication(x =>
             {

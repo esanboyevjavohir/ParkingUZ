@@ -1,6 +1,6 @@
 ﻿using ParkingUZ.DataAccess.Persistence;
 
-namespace Airways.API.Middleware
+namespace ParkingUZ.API.Middleware
 {
     public class TransactionMiddleware
     {
