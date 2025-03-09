@@ -1,6 +1,8 @@
-﻿namespace ParkingUZ.Application.DTO
+﻿using ParkingUZ.Core.Common;
+
+namespace ParkingUZ.Application.DTO
 {
-    public class UserResponceDTO
+    public class UserResponceDTO : BaseEntity
     {
         public string Name { get; set; }
         public string Email { get; set; }

@@ -16,6 +16,12 @@ namespace ParkingUZ.Application.Validators
                 .MaximumLength(100).WithMessage("Email must not exceed 100 characters")
                 .When(x => !string.IsNullOrEmpty(x.Email));
 
+            RuleFor(x => x.PhoneNumber)
+                .NotEmpty().WithMessage("PhoneNumber cannot be empty")
+                .MinimumLength(13).WithMessage("PhoneNumber must be at least 13 characters long")
+                .Matches(@"^\+").WithMessage("PhoneNumber must start with '+'")
+                .Matches(@"^\+\d+$").WithMessage("PhoneNumber must contain only digits after '+'");
+
             RuleFor(x => x.Password)
                 .MinimumLength(8).WithMessage("Password must be at least 8 characters long")
                 .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter")

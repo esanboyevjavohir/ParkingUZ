@@ -106,29 +106,70 @@ namespace ParkingUZ.Application.Services.Implement
             return true;
         }
 
-        public Task<List<UserResponceDTO>> GetAllAsync()
+        public async Task<List<UserResponceDTO>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var users = await _userRepo.GetAllAsync(u => true);
+
+            return users.Select(a => new UserResponceDTO
+            {
+                Id = a.Id,
+                Name = a.Name,
+                Email = a.Email,
+                PhoneNumber = a.PhoneNumber,
+            }).ToList();
         }
 
-        public Task<UserResponceDTO> GetByIdAsync(Guid id)
+        public async Task<UserResponceDTO> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var user = await _userRepo.GetFirstAsync(a => a.Id == id);
+            if(user == null)
+                throw new ArgumentNullException(nameof(user));
+
+            return new UserResponceDTO()
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber
+            };
         }
 
-        public Task<User> GetUserByEmailAsync(string email)
+        public async Task<User> GetUserByEmailAsync(string email)
         {
-            throw new NotImplementedException();
+            return await _userRepo.GetUserByEmailAsync(email);
         }
 
-        public Task<User> UpdateUserAsync(Guid id, UpdateUserDTO updateUserDTO)
+        public async Task<User> UpdateUserAsync(Guid id, UpdateUserDTO updateUserDTO)
         {
-            throw new NotImplementedException();
+            var validationResult = await _updateUserValidator.ValidateAsync(updateUserDTO);
+            if (!validationResult.IsValid)
+                throw new ValidationException(validationResult.Errors);
+
+            if(updateUserDTO == null)
+                throw new ArgumentNullException(nameof(updateUserDTO), 
+                    "updateUserDTO cannot be null");
+
+            var user = await _userRepo.GetFirstAsync(u => u.Id == id);
+            if(user == null)
+                throw new ArgumentNullException(nameof(user));  
+
+            string randomSalt = Guid.NewGuid().ToString();
+
+            user.Name = updateUserDTO.Name;
+            user.Email = updateUserDTO.Email;
+            user.PhoneNumber = updateUserDTO.PhoneNumber;
+            user.Salt = randomSalt;
+            user.Password = _passwordHasher.Encrypt(
+                password: updateUserDTO.Password,
+                salt: randomSalt);
+
+            await _userRepo.UpdateAsync(user);
+            return user;
         }
 
-        public Task<bool> VerifyPassword(User user, string password)
+        public async Task<bool> VerifyPassword(User user, string password)
         {
-            throw new NotImplementedException();
+            return await Task.Run(() => user.Password == password); 
         }
     }
 }
