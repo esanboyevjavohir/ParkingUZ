@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using ParkingUZ.DataAccess.Authentication;
 using ParkingUZ.DataAccess.Identity;
 using ParkingUZ.DataAccess.Persistence;
+using ParkingUZ.DataAccess.Repositories.Implement;
+using ParkingUZ.DataAccess.Repositories.Interface;
 using ParkingUZ.Shared.Services;
 using ParkingUZ.Shared.Services.Impl;
 
@@ -23,16 +25,25 @@ namespace ParkingUZ.DataAccess
 
         private static void AddRepositories(this IServiceCollection services)
         {
+            services.AddScoped<IDiscountRepository, DiscountRepository>();
+            services.AddScoped<IParkingSpotRepository, ParkingSpotRepository>();
+            services.AddScoped<IParkingSubscriptionRepository, ParkingSubscriptionRepository>();
+            services.AddScoped<IParkingZoneRepository, ParkingZoneRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IQRCodeRepository, QRCodeRepository>();
+            services.AddScoped<IReservationRepository, ReservationRepository>();
+            services.AddScoped<IReviewRepository, ReviewRepository>();
+            services.AddScoped<ISubscriptionPlanRepository, SubscriptionPlanRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IJwtTokenHandler, JwtTokenHandler>();
-            services.AddScoped<IClaimService, ClaimService>(); 
         }
 
         private static void AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             var databaseConfig = configuration.GetSection("Database").Get<DatabaseConfiguration>();
 
-            if (databaseConfig == null)
+            /*if (databaseConfig == null)
             {
                 throw new InvalidOperationException("Database configuration section is missing.");
             }
@@ -40,7 +51,7 @@ namespace ParkingUZ.DataAccess
             if (!databaseConfig.UseInMemoryDatabase && string.IsNullOrWhiteSpace(databaseConfig.ConnectionString))
             {
                 throw new InvalidOperationException("Database connection string is not configured properly.");
-            }
+            }*/
 
             if (databaseConfig.UseInMemoryDatabase)
             {
