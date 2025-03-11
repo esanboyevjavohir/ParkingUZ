@@ -10,6 +10,7 @@ using System.Text;
 using ParkingUZ.Shared.Services.Impl;
 using ParkingUZ.Shared.Services;
 using ParkingUZ.DataAccess;
+using ParkingUZ.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,23 +26,13 @@ builder.Services.AddSwaggerGen(c =>
 });
 builder.Services.AddSwagger();
 
-/*builder.Services.AddDataAccess(builder.Configuration)
-    .AddApplication(builder.Environment);*/
+builder.Services.AddDataAccess(builder.Configuration)
+    .AddApplication(builder.Environment);
 
 builder.Services.Configure<JwtOption>(builder.Configuration.GetSection("JwtOptions"));
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDataAccess(builder.Configuration);
-
-
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("User", policy =>
-        policy.RequireRole("Role", "User"));
-
-    options.AddPolicy("Admin", policy =>
-        policy.RequireRole("Role", "Admin"));
-});
 
 var jwtOption = builder.Configuration.GetSection("JwtOptions").Get<JwtOption>();
 builder.Services.AddAuthentication(options =>
@@ -63,7 +54,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("User", policy =>
+        policy.RequireRole("Role", "User"));
+
+    options.AddPolicy("Admin", policy =>
+        policy.RequireRole("Role", "Admin"));
+});
 
 var app = builder.Build();
 
@@ -88,7 +86,6 @@ app.UseMiddleware<PerformanceMiddleware>();
 app.UseMiddleware<TransactionMiddleware>();
 
 app.UseMiddleware<ExceptionHandlerMiddlewear>();
-app.UseMiddleware<RabbitMqMiddleware>();
 
 app.MapControllers();
 

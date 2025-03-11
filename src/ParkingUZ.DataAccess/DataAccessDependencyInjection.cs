@@ -43,28 +43,10 @@ namespace ParkingUZ.DataAccess
         {
             var databaseConfig = configuration.GetSection("Database").Get<DatabaseConfiguration>();
 
-            /*if (databaseConfig == null)
-            {
-                throw new InvalidOperationException("Database configuration section is missing.");
-            }
-
-            if (!databaseConfig.UseInMemoryDatabase && string.IsNullOrWhiteSpace(databaseConfig.ConnectionString))
-            {
-                throw new InvalidOperationException("Database connection string is not configured properly.");
-            }*/
-
-            if (databaseConfig.UseInMemoryDatabase)
-            {
-                services.AddDbContext<DataBaseContext>(options =>
-                    options.UseInMemoryDatabase("ParkingDatabase"));
-            }
-            else
-            {
-                services.AddDbContext<DataBaseContext>(options =>
-                    options.UseNpgsql(databaseConfig.ConnectionString,
-                        npgsqlOptions => npgsqlOptions.MigrationsAssembly(
-                            typeof(DataBaseContext).Assembly.FullName)));
-            }
+            services.AddDbContext<DataBaseContext>(options =>
+                options.UseNpgsql(databaseConfig.ConnectionString,
+                    npgsqlOptions => npgsqlOptions.MigrationsAssembly(
+                        typeof(DataBaseContext).Assembly.FullName)));
         }
 
         private static void AddIdentity(this IServiceCollection services)

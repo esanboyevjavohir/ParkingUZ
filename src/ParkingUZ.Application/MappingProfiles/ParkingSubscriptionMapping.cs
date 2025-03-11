@@ -11,6 +11,8 @@ namespace ParkingUZ.Application.MappingProfiles
             CreateMap<CreateParkSubsModel, ParkingSubscription>();
 
             CreateMap<UpdateParkSubsModel, ParkingSubscription>().ReverseMap();
+
+            CreateMap<ParkingSubscription, ParkingSubscriptionResponceModel>();
         }
     }
 }

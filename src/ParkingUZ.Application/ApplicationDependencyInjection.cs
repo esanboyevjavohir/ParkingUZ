@@ -11,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using ParkingUZ.Application.DTO;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Application.Services.Implement;
+using ParkingUZ.Application.MappingProfiles;
 
 namespace ParkingUZ.Application
 {
@@ -47,7 +48,7 @@ namespace ParkingUZ.Application
 
         private static void RegisterAutoMapper(this IServiceCollection services)
         {
-            //services.AddAutoMapper(typeof(IMappingProfilesMarker));
+            services.AddAutoMapper(typeof(IMappingProfilesMarker));
         }
 
         private static void RegisterCashing(this IServiceCollection services)
