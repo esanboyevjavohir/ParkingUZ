@@ -201,6 +201,35 @@ namespace ParkingUZ.DataAccess.Migrations
                     b.ToTable("Discounts");
                 });
 
+            modelBuilder.Entity("ParkingUZ.Core.Entities.GeoLocation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedOn")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal>("XCoordinate")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("YCoordinate")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GeoLocation");
+                });
+
             modelBuilder.Entity("ParkingUZ.Core.Entities.ParkingSpot", b =>
                 {
                     b.Property<Guid>("Id")
@@ -283,6 +312,9 @@ namespace ParkingUZ.DataAccess.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<Guid>("GeoLocationId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -299,6 +331,9 @@ namespace ParkingUZ.DataAccess.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GeoLocationId")
+                        .IsUnique();
 
                     b.ToTable("ParkingZones");
                 });
@@ -383,16 +418,16 @@ namespace ParkingUZ.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("CheckInTime")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("CheckOutTime")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("EntryTime")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("ExitTime")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("ParkingSpotId")
@@ -698,6 +733,17 @@ namespace ParkingUZ.DataAccess.Migrations
                     b.Navigation("SubscriptionPlan");
                 });
 
+            modelBuilder.Entity("ParkingUZ.Core.Entities.ParkingZone", b =>
+                {
+                    b.HasOne("ParkingUZ.Core.Entities.GeoLocation", "GeoLocation")
+                        .WithOne("ParkingZone")
+                        .HasForeignKey("ParkingUZ.Core.Entities.ParkingZone", "GeoLocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GeoLocation");
+                });
+
             modelBuilder.Entity("ParkingUZ.Core.Entities.Payment", b =>
                 {
                     b.HasOne("ParkingUZ.Core.Entities.Reservation", "Reservation")
@@ -762,6 +808,11 @@ namespace ParkingUZ.DataAccess.Migrations
                     b.Navigation("ParkingZone");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ParkingUZ.Core.Entities.GeoLocation", b =>
+                {
+                    b.Navigation("ParkingZone");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,10 +2,10 @@
 
 namespace ParkingUZ.Application.Models.Payment
 {
-    public class PaymentResponceModel : BaseResponceModel
+    public class PaymentResponceModel : BaseResponseModel
     {
         public decimal Amount { get; set; }
-        public CardType CardType { get; set; }
+        public PaymentType CardType { get; set; }
         public PayStatus PayStatus { get; set; }
         public DateTime PaymentDate { get; set; }
     }

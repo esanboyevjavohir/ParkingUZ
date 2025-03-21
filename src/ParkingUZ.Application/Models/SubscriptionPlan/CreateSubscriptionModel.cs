@@ -8,5 +8,5 @@ namespace ParkingUZ.Application.Models.SubscriptionPlan
         public decimal Price { get; set; }
         public string Description { get; set; }
     }
-    public class CreateSubscriptionResponceModel : BaseResponceModel { }
+    public class CreateSubscriptionResponceModel : BaseResponseModel { }
 }

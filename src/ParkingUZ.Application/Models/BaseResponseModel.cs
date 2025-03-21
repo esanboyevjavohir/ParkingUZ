@@ -1,6 +1,6 @@
 ﻿namespace ParkingUZ.Application.Models
 {
-    public class BaseResponceModel
+    public class BaseResponseModel
     {
         public Guid Id { get; set; }
     }

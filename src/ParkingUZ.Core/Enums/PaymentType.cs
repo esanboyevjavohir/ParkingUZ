@@ -1,7 +1,8 @@
 ﻿namespace ParkingUZ.Core.Enums
 {
-    public enum CardType
+    public enum PaymentType
     {
+        Cash,
         Uzcard,
         Humo,
         Visa,

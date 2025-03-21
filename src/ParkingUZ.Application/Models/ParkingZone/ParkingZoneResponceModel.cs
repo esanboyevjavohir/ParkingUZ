@@ -1,6 +1,6 @@
 ﻿namespace ParkingUZ.Application.Models.ParkingZone
 {
-    public class ParkingZoneResponceModel : BaseResponceModel
+    public class ParkingZoneResponceModel : BaseResponseModel
     {
         public string Name { get; set; }
         public string Address { get; set; }

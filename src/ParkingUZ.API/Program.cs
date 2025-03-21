@@ -11,19 +11,20 @@ using ParkingUZ.Shared.Services.Impl;
 using ParkingUZ.Shared.Services;
 using ParkingUZ.DataAccess;
 using ParkingUZ.Application;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Configure services
 builder.Services.AddControllers(
     config => config.Filters.Add(typeof(ValidateModelAttribute))
 );
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Parking API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ParkingUZ API", Version = "v1" });
 });
+
 builder.Services.AddSwagger();
 
 builder.Services.AddDataAccess(builder.Configuration)
@@ -32,7 +33,15 @@ builder.Services.AddDataAccess(builder.Configuration)
 builder.Services.Configure<JwtOption>(builder.Configuration.GetSection("JwtOptions"));
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddDataAccess(builder.Configuration);
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("User", policy =>
+        policy.RequireRole("Role", "User"));
+
+    options.AddPolicy("Admin", policy =>
+        policy.RequireRole("Role", "Admin"));
+});
 
 var jwtOption = builder.Configuration.GetSection("JwtOptions").Get<JwtOption>();
 builder.Services.AddAuthentication(options =>
@@ -47,21 +56,14 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtOption!.Issuer,
+        ValidIssuer = jwtOption.Issuer,
         ValidAudience = jwtOption.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtOption.SecretKey))
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("User", policy =>
-        policy.RequireRole("Role", "User"));
-
-    options.AddPolicy("Admin", policy =>
-        policy.RequireRole("Role", "Admin"));
-});
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 

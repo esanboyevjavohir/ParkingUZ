@@ -6,7 +6,7 @@ namespace ParkingUZ.Core.Entities
     public class Payment : BaseEntity, IAuditedEntity
     {
         public decimal Amount { get; set; }
-        public CardType CardType { get; set; }
+        public PaymentType PaymentType { get; set; }
         public PayStatus PayStatus { get; set; }
         public DateTime PaymentDate { get; set; }
         public Guid ReservationId { get; set; }

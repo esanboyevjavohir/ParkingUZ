@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ParkingUZ.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class dbSet4 : Migration
+    public partial class initial1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,14 +52,12 @@ namespace ParkingUZ.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ParkingZones",
+                name: "GeoLocation",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: true),
-                    Address = table.Column<string>(type: "text", nullable: true),
-                    TotalSpots = table.Column<int>(type: "integer", nullable: false),
-                    PricePerHour = table.Column<decimal>(type: "numeric", nullable: false),
+                    XCoordinate = table.Column<decimal>(type: "numeric", nullable: false),
+                    YCoordinate = table.Column<decimal>(type: "numeric", nullable: false),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     UpdatedBy = table.Column<string>(type: "text", nullable: true),
@@ -67,7 +65,7 @@ namespace ParkingUZ.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ParkingZones", x => x.Id);
+                    table.PrimaryKey("PK_GeoLocation", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -216,6 +214,32 @@ namespace ParkingUZ.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ParkingZones",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    TotalSpots = table.Column<int>(type: "integer", nullable: false),
+                    PricePerHour = table.Column<decimal>(type: "numeric", nullable: false),
+                    GeoLocationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    CreatedOn = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedOn = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ParkingZones", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ParkingZones_GeoLocation_GeoLocationId",
+                        column: x => x.GeoLocationId,
+                        principalTable: "GeoLocation",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Discounts",
                 columns: table => new
                 {
@@ -327,56 +351,17 @@ namespace ParkingUZ.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ParkingHistorys",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ParkingZoneId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SpotId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ParkingSpotId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CheckInTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    CheckOutTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    TotalPaid = table.Column<decimal>(type: "numeric", nullable: false),
-                    CreatedBy = table.Column<string>(type: "text", nullable: true),
-                    CreatedOn = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
-                    UpdatedOn = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ParkingHistorys", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ParkingHistorys_ParkingSpots_ParkingSpotId",
-                        column: x => x.ParkingSpotId,
-                        principalTable: "ParkingSpots",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ParkingHistorys_ParkingZones_ParkingZoneId",
-                        column: x => x.ParkingZoneId,
-                        principalTable: "ParkingZones",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ParkingHistorys_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Reservations",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     StartTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    EntryTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    ExitTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
+                    TotalPaid = table.Column<decimal>(type: "numeric", nullable: true),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SpotId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ParkingSpotId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ParkSubsId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ParkingSpotId = table.Column<Guid>(type: "uuid", nullable: false),
                     ParkingSubscriptionId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedBy = table.Column<string>(type: "text", nullable: true),
                     CreatedOn = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -390,7 +375,8 @@ namespace ParkingUZ.DataAccess.Migrations
                         name: "FK_Reservations_ParkingSpots_ParkingSpotId",
                         column: x => x.ParkingSpotId,
                         principalTable: "ParkingSpots",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reservations_ParkingSubscriptions_ParkingSubscriptionId",
                         column: x => x.ParkingSubscriptionId,
@@ -497,21 +483,6 @@ namespace ParkingUZ.DataAccess.Migrations
                 column: "ParkingZoneId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParkingHistorys_ParkingSpotId",
-                table: "ParkingHistorys",
-                column: "ParkingSpotId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ParkingHistorys_ParkingZoneId",
-                table: "ParkingHistorys",
-                column: "ParkingZoneId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ParkingHistorys_UserId",
-                table: "ParkingHistorys",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ParkingSpots_ParkingZoneId",
                 table: "ParkingSpots",
                 column: "ParkingZoneId");
@@ -525,6 +496,12 @@ namespace ParkingUZ.DataAccess.Migrations
                 name: "IX_ParkingSubscriptions_SubscriptionPlanId",
                 table: "ParkingSubscriptions",
                 column: "SubscriptionPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ParkingZones_GeoLocationId",
+                table: "ParkingZones",
+                column: "GeoLocationId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_ReservationId",
@@ -584,9 +561,6 @@ namespace ParkingUZ.DataAccess.Migrations
                 name: "Discounts");
 
             migrationBuilder.DropTable(
-                name: "ParkingHistorys");
-
-            migrationBuilder.DropTable(
                 name: "Payments");
 
             migrationBuilder.DropTable(
@@ -618,6 +592,9 @@ namespace ParkingUZ.DataAccess.Migrations
 
             migrationBuilder.DropTable(
                 name: "SubscriptionPlans");
+
+            migrationBuilder.DropTable(
+                name: "GeoLocation");
         }
     }
 }

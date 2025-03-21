@@ -1,6 +1,6 @@
 ﻿namespace ParkingUZ.Application.Models.Discount
 {
-    public class DiscountResponceModel : BaseResponceModel
+    public class DiscountResponceModel : BaseResponseModel
     {
         public string Name { get; set; }
         public string Description { get; set; }

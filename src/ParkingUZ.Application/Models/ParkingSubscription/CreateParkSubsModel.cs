@@ -5,5 +5,5 @@
         public Guid SubscriptionPlanId { get; set; }
         public Guid ParkingZoneId { get; set; }
     }
-    public class CreateParkSubsResponceModel : BaseResponceModel { }
+    public class CreateParkSubsResponceModel : BaseResponseModel { }
 }

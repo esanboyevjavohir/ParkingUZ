@@ -2,7 +2,7 @@
 
 namespace ParkingUZ.Application.Models.SubscriptionPlan
 {
-    public class SubscriptionResponceModel : BaseResponceModel
+    public class SubscriptionResponceModel : BaseResponseModel
     {
         public SubscriptionType Type { get; set; }
         public decimal Price { get; set; }

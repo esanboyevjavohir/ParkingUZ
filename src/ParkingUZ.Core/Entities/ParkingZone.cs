@@ -9,6 +9,8 @@ namespace ParkingUZ.Core.Entities
         public string Address { get; set; }
         public int TotalSpots { get; set; }
         public decimal PricePerHour { get; set; }
+        public Guid GeoLocationId { get; set; }
+        public GeoLocation GeoLocation { get; set; }
 
         public List<Discount> Discounts = new List<Discount>();
         public Discount ActiveDiscount => Discounts.FirstOrDefault

@@ -9,5 +9,5 @@
         public DateTime EndDate { get; set; }
         public Guid ParkingZoneId { get; set; }
     }
-    public class UpdateDiscountResponceModel : BaseResponceModel { }
+    public class UpdateDiscountResponceModel : BaseResponseModel { }
 }

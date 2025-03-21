@@ -2,7 +2,7 @@
 
 namespace ParkingUZ.Application.Models.Reservation
 {
-    public class ReservationResponceModel : BaseResponceModel
+    public class ReservationResponceModel : BaseResponseModel
     {
         public DateTime StartTime { get; set; }
         public DateTime? CheckInTime { get; set; }

@@ -6,5 +6,5 @@
         public DateTime GeneratedAt { get; set; }
         public Guid ReservationId { get; set; }
     }
-    public class UpdateQRCodeResponceModel : BaseResponceModel { }
+    public class UpdateQRCodeResponceModel : BaseResponseModel { }
 }

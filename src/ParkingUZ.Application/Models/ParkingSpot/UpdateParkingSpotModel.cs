@@ -8,5 +8,5 @@ namespace ParkingUZ.Application.Models.ParkingSpot
         public SpotStatus Status { get; set; }
         public Guid ParkingZoneId { get; set; }
     }
-    public class UpdateParkingSpotResponceModel : BaseResponceModel { }
+    public class UpdateParkingSpotResponceModel : BaseResponseModel { }
 }

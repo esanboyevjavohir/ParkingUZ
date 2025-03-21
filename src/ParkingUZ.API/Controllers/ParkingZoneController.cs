@@ -4,9 +4,12 @@ using ParkingUZ.Application.Models;
 using ParkingUZ.Application.Services.Implement;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Application.Models.ParkingZone;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ParkingUZ.API.Controllers
 {
+    [Authorize(Policy = "Admin")]
+    [Route("api/parkingzone")]
     public class ParkingZoneController : ApiController
     {
         private readonly IParkingZoneService _parkingZoneService;
@@ -37,6 +40,7 @@ namespace ParkingUZ.API.Controllers
             return Ok(ApiResult<IEnumerable<ParkingZoneResponceModel>>.Success(responce));
         }
 
+        [AllowAnonymous]
         [HttpPost("Create")]
         public async Task<IActionResult> CreateAsync(CreateParkingZoneModel model)
         {

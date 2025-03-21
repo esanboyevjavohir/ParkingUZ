@@ -7,5 +7,5 @@
         public Guid UserId { get; set; }
         public Guid ParkingZoneId { get; set; }
     }
-    public class UpdateReviewResponceModel : BaseResponceModel { }
+    public class UpdateReviewResponceModel : BaseResponseModel { }
 }

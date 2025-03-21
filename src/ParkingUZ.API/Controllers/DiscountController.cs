@@ -10,7 +10,7 @@ namespace ParkingUZ.API.Controllers
     {
         private readonly IDiscountService _discountService;
 
-        public DiscountController(IDiscountService discountService)
+        public DiscountController(IDiscountService discountService)         
         {
             _discountService = discountService;
         }

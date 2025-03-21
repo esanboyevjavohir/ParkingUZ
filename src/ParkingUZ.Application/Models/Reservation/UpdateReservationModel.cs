@@ -14,5 +14,5 @@ namespace ParkingUZ.Application.Models.Reservation
         public Guid ParkingSpotId { get; set; }
         public Guid ParkingSubscriptionId { get; set; }
     }
-    public class UpdateReservationResponceModel : BaseResponceModel { }
+    public class UpdateReservationResponceModel : BaseResponseModel { }
 }
