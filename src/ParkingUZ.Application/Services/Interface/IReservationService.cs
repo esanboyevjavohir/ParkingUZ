@@ -1,15 +1,14 @@
-﻿using ParkingUZ.Application.Models.Reservation;
+﻿using ParkingUZ.Application.Models;
+using ParkingUZ.Application.Models.Reservation;
 
 namespace ParkingUZ.Application.Services.Interface
 {
     public interface IReservationService
     {
-        Task<ReservationResponceModel> GetByIdAsync(Guid id);
-        Task<List<ReservationResponceModel>> GetAllAsync();
-        Task<CreateReservationResponceModel> CreateAsync(CreateReservationModel create,
-            CancellationToken cancellationToken = default);
-        Task<UpdateReservationResponceModel> UpdateAsync(Guid id, 
-            UpdateReservationModel update, CancellationToken cancellationToken = default);
-        Task<bool> DeleteAsync(Guid id);
+        Task<ApiResult<ReservationResponceModel>> GetByIdAsync(Guid id);
+        Task<ApiResult<List<ReservationResponceModel>>> GetAllAsync();
+        Task<ApiResult<CreateReservationResponceModel>> CreateAsync(CreateReservationModel create);
+        Task<ApiResult<UpdateReservationResponceModel>> UpdateAsync(Guid id, UpdateReservationModel update);
+        Task<ApiResult<bool>> DeleteAsync(Guid id);
     }
 }

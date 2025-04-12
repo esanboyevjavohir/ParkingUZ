@@ -19,9 +19,7 @@ namespace ParkingUZ.Core.Entities
         public List<Review> Reviews = new List<Review>();
         public List<ParkingSpot> ParkingSpots = new List<ParkingSpot>();
 
-        public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public string UpdatedBy { get; set; }
         public DateTime? UpdatedOn { get; set; }
     }
 }

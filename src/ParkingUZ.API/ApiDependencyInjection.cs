@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ParkingUZ.Application.Helpers.GenerateJwt;
 using System.Text;
 
 namespace ParkingUZ.API
@@ -9,27 +10,28 @@ namespace ParkingUZ.API
     {
         public static void AddJwt(this IServiceCollection services, IConfiguration configuration)
         {
-            var secretKey = configuration.GetValue<string>("JwtOptions:SecretKey");
-
-            var key = Encoding.ASCII.GetBytes(secretKey!);
+            var secretKey = configuration.GetValue<string>("JwtConfiguration:SecretKey");
+            var key = Encoding.ASCII.GetBytes(secretKey);
 
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(x =>
-                {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
+              .AddJwtBearer(x =>
+              {
+                  x.RequireHttpsMetadata = false;
+                  x.SaveToken = true;
+                  x.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuerSigningKey = true,
+                      IssuerSigningKey = new SymmetricSecurityKey(key),
+                      ValidateIssuer = false,
+                      ValidateAudience = false,
+                      RoleClaimType = CustomClaimNames.Role,
+                      NameClaimType = CustomClaimNames.Id
+                  };
+              });
         }
 
         public static void AddSwagger(this IServiceCollection services)
@@ -46,19 +48,19 @@ namespace ParkingUZ.API
                 });
 
                 s.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
                 {
-                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
         }
     }

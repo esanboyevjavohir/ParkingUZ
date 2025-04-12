@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using ParkingUZ.Application.Models.User;
 using ParkingUZ.Core.Entities;
 using ParkingUZ.DataAccess;
 using System.IdentityModel.Tokens.Jwt;
@@ -7,7 +8,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ParkingUZ.DataAccess.Authentication
+namespace ParkingUZ.Application.Helpers.GenerateJwt
 {
     public class JwtTokenHandler : IJwtTokenHandler
     {
@@ -17,7 +18,7 @@ namespace ParkingUZ.DataAccess.Authentication
         {
             jwtOption = options.Value;
         }
-        public JwtSecurityToken GenerateAccesToken(UserForCreationDTO user)
+        public JwtSecurityToken GenerateAccesToken(CreateUserModel user)
         {
             var claims = new List<Claim>
             {
@@ -44,6 +45,7 @@ namespace ParkingUZ.DataAccess.Authentication
             var claims = new List<Claim>
             {
                 new Claim(CustomClaimNames.Id , user.Id.ToString()),
+                new Claim(CustomClaimNames.Email, user.Email),
                 new Claim(CustomClaimNames.Role , user.Role.ToString())
             };
 
@@ -57,8 +59,7 @@ namespace ParkingUZ.DataAccess.Authentication
                 claims: claims,
                 signingCredentials: new SigningCredentials(
                  key: authSigningKey,
-                 algorithm: SecurityAlgorithms.HmacSha256
-                    )
+                 algorithm: SecurityAlgorithms.HmacSha256)
                 );
             return token;
         }
@@ -66,8 +67,10 @@ namespace ParkingUZ.DataAccess.Authentication
         public string GenerateRefreshToken()
         {
             byte[] bytes = new byte[64];
+
             using var radomGenerator =
                 RandomNumberGenerator.Create();
+
             radomGenerator.GetBytes(bytes);
             return Convert.ToBase64String(bytes);
         }

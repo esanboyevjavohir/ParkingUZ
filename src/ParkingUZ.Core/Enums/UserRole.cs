@@ -1,6 +1,6 @@
 ﻿namespace ParkingUZ.Core.Enums
 {
-    public enum Role
+    public enum UserRole
     {
         User,
         Admin

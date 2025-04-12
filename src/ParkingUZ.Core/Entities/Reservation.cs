@@ -21,9 +21,7 @@ namespace ParkingUZ.Core.Entities
         public List<Payment> Payments = new List<Payment>();
         public List<QRCode> QRCodes = new List<QRCode>();
 
-        public string CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
-        public string UpdatedBy { get; set; }
         public DateTime? UpdatedOn { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace ParkingUZ.DataAccess.Authentication
+namespace ParkingUZ.Application.Helpers.GenerateJwt
 {
     public sealed class PasswordHasher : IPasswordHasher
     {

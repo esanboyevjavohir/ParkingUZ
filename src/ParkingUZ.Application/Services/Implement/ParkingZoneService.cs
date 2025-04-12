@@ -1,69 +1,98 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using ParkingUZ.Application.Models;
+using ParkingUZ.Application.Models.ParkingSubscription;
 using ParkingUZ.Application.Models.ParkingZone;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Core.Entities;
-using ParkingUZ.DataAccess.Repositories.Interface;
+using ParkingUZ.DataAccess.Persistence;
 
 namespace ParkingUZ.Application.Services.Implement
 {
     public class ParkingZoneService : IParkingZoneService
     {
         private readonly IMapper _mapper;
-        private readonly IParkingZoneRepository _parkingZoneRepository;
+        private readonly DataBaseContext _dataBaseContext;
 
-        public ParkingZoneService(IMapper mapper, 
-            IParkingZoneRepository parkingZoneRepository)
+        public ParkingZoneService(IMapper mapper, DataBaseContext dataBaseContext)
         {
             _mapper = mapper;
-            _parkingZoneRepository = parkingZoneRepository;
+            _dataBaseContext = dataBaseContext;
         }
 
-        public async Task<CreateParkingZoneResponceModel> CreateAsync(CreateParkingZoneModel create,
-            CancellationToken cancellationToken = default)
+        public async Task<ApiResult<CreateParkingZoneResponceModel>> CreateAsync(CreateParkingZoneModel create)
         {
-            var todoItem = _mapper.Map<ParkingZone>(create);
+            var createModel = _mapper.Map<ParkingZone>(create);
+            createModel.CreatedOn = DateTime.UtcNow;
 
-            return new CreateParkingZoneResponceModel
+            _dataBaseContext.ParkingZones.Add(createModel);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<CreateParkingZoneResponceModel>.Success(new CreateParkingZoneResponceModel
             {
-                Id = (await _parkingZoneRepository.AddAsync(todoItem)).Id
-            };
+                Id = createModel.Id
+            });
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<ApiResult<bool>> DeleteAsync(Guid id)
         {
-            var res = await _parkingZoneRepository.GetFirstAsync(p => p.Id == id);
-            if(res == null) return false;
-
-            await _parkingZoneRepository.DeleteAsync(res);
-            return true;
-        }
-
-        public async Task<List<ParkingZoneResponceModel>> GetAllAsync()
-        {
-            var res = await _parkingZoneRepository.GetAllAsync(p => true);
-            return _mapper.Map<List<ParkingZoneResponceModel>>(res);    
-        }
-
-        public async Task<ParkingZoneResponceModel> GetByIdAsync(Guid id)
-        {
-            var todoItem = await _parkingZoneRepository.GetFirstAsync(p => p.Id == id);
-            if (todoItem == null)
-                throw new Exception("ParkingZone not found");
-
-            return _mapper.Map<ParkingZoneResponceModel>(todoItem);
-        }
-
-        public async Task<UpdateParkingZoneResponceModel> UpdateAsync(Guid id, 
-            UpdateParkingZoneModel update, CancellationToken cancellationToken = default)
-        {
-            var todoItem = await _parkingZoneRepository.GetFirstAsync(p=> p.Id == id);
-            
-            _mapper.Map(update, todoItem);
-
-            return new UpdateParkingZoneResponceModel
+            var delete = _dataBaseContext.ParkingZones.FirstOrDefault(x => x.Id == id);
+            if (delete == null)
             {
-                Id = (await _parkingZoneRepository.UpdateAsync(todoItem)).Id
-            };
+                return ApiResult<bool>.Failure(new List<string> { "ParkingZones not found" });
+            }
+
+            _dataBaseContext.ParkingZones.Remove(delete);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<bool>.Success(true);
+        }
+
+        public async Task<ApiResult<List<ParkingZoneResponceModel>>> GetAllAsync()
+        {
+            var getAll = await _dataBaseContext.ParkingZones
+                .AsNoTracking()
+                .ProjectTo<ParkingZoneResponceModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return ApiResult<List<ParkingZoneResponceModel>>.Success(getAll);
+        }
+
+        public async Task<ApiResult<ParkingZoneResponceModel>> GetByIdAsync(Guid id)
+        {
+            var getById = await _dataBaseContext.ParkingZones
+                .AsNoTracking()
+                .ProjectTo<ParkingZoneResponceModel>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (getById == null)
+            {
+                return ApiResult<ParkingZoneResponceModel>.Failure(
+                                new List<string> { "ParkingZones not found" });
+            }
+
+            return ApiResult<ParkingZoneResponceModel>.Success(getById);
+        }
+
+        public async Task<ApiResult<UpdateParkingZoneResponceModel>> UpdateAsync(Guid id, 
+            UpdateParkingZoneModel update)
+        {
+            var updateModel = await _dataBaseContext.ParkingZones.FirstOrDefaultAsync(d => d.Id == id);
+            if (updateModel == null)
+            {
+                return ApiResult<UpdateParkingZoneResponceModel>.Failure(new List<string> { "ParkingZone not found" });
+            }
+
+            _mapper.Map(update, updateModel);
+            updateModel.UpdatedOn = DateTime.UtcNow;
+            _dataBaseContext.ParkingZones.Update(updateModel);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<UpdateParkingZoneResponceModel>.Success(new UpdateParkingZoneResponceModel
+            {
+                Id = updateModel.Id
+            });
         }
     }
 }

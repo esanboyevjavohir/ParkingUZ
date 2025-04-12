@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
+using ParkingUZ.Application.Models.User;
 using ParkingUZ.DataAccess;
 
 namespace ParkingUZ.Application.Validators
 {
-    public class UserForCreationDtoValidator : AbstractValidator<UserForCreationDTO>
+    public class UserForCreationDtoValidator : AbstractValidator<CreateUserModel>
     {
         public UserForCreationDtoValidator()
         {

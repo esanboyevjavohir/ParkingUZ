@@ -1,11 +1,10 @@
-﻿using ParkingUZ.Core.Entities;
-using ParkingUZ.Core.Enums;
-using System.ComponentModel;
+﻿using ParkingUZ.Core.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
-namespace ParkingUZ.DataAccess
+namespace ParkingUZ.Application.Models.User
 {
-    public class UserForCreationDTO
+    public class CreateUserModel
     {
         [Required(ErrorMessage = "Foydalanuvchi nomini kiritish shart")]
         [StringLength(15, MinimumLength = 2, ErrorMessage = "Ism uzunligi kamida 2 ta va maksimal 15 ta bo'lishi kerak")]
@@ -21,9 +20,11 @@ namespace ParkingUZ.DataAccess
         [RegularExpression(@"^\+[0-9]*$", ErrorMessage = "Nomer '+' belgisi va faqat raqamlardan iborat bo‘lishi kerak")]
         public string? PhoneNumber { get; set; }
 
-        public Role Role { get; set; }
+        public UserRole Role { get; set; }
 
         [DefaultValue("")]
         public string? Password { get; set; }
     }
+
+    public class CreateUserResponseModel : BaseResponseModel { }
 }

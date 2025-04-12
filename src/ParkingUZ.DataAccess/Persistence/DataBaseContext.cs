@@ -21,7 +21,6 @@ namespace ParkingUZ.DataAccess.Persistence
             AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
         }
 
-
         public DbSet<User> User {  get; set; }
         public DbSet<Review> Reviews {  get; set; }
         public DbSet<Reservation> Reservations {  get; set; }
@@ -48,12 +47,10 @@ namespace ParkingUZ.DataAccess.Persistence
                     switch(entry.State)
                     {
                         case EntityState.Added:
-                            entry.Entity.CreatedBy = _claimService.GetUserId();
                             entry.Entity.CreatedOn = DateTime.Now;
                             break;
 
                         case EntityState.Modified:
-                            entry.Entity.UpdatedBy = _claimService.GetUserId();
                             entry.Entity.UpdatedOn = DateTime.Now;
                             break;
                     }

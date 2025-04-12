@@ -2,11 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ParkingUZ.DataAccess.Authentication;
 using ParkingUZ.DataAccess.Identity;
 using ParkingUZ.DataAccess.Persistence;
-using ParkingUZ.DataAccess.Repositories.Implement;
-using ParkingUZ.DataAccess.Repositories.Interface;
 using ParkingUZ.Shared.Services;
 using ParkingUZ.Shared.Services.Impl;
 
@@ -19,24 +16,7 @@ namespace ParkingUZ.DataAccess
         {
             services.AddDatabase(configuration);
             services.AddIdentity();
-            services.AddRepositories();
             return services;
-        }
-
-        private static void AddRepositories(this IServiceCollection services)
-        {
-            services.AddScoped<IDiscountRepository, DiscountRepository>();
-            services.AddScoped<IParkingSpotRepository, ParkingSpotRepository>();
-            services.AddScoped<IParkingSubscriptionRepository, ParkingSubscriptionRepository>();
-            services.AddScoped<IParkingZoneRepository, ParkingZoneRepository>();
-            services.AddScoped<IPaymentRepository, PaymentRepository>();
-            services.AddScoped<IQRCodeRepository, QRCodeRepository>();
-            services.AddScoped<IReservationRepository, ReservationRepository>();
-            services.AddScoped<IReviewRepository, ReviewRepository>();
-            services.AddScoped<ISubscriptionPlanRepository, SubscriptionPlanRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IPasswordHasher, PasswordHasher>();
-            services.AddScoped<IJwtTokenHandler, JwtTokenHandler>();
         }
 
         private static void AddDatabase(this IServiceCollection services, IConfiguration configuration)

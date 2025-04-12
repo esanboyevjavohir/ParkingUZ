@@ -1,69 +1,95 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using ParkingUZ.Application.Models;
 using ParkingUZ.Application.Models.Discount;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Core.Entities;
-using ParkingUZ.DataAccess.Repositories.Interface;
+using ParkingUZ.DataAccess.Persistence;
 
 namespace ParkingUZ.Application.Services.Implement
 {
     public class DiscountService : IDiscountService
     {
         private readonly IMapper _mapper;
-        private readonly IDiscountRepository _discountRepository;
+        private readonly DataBaseContext _dataBaseContext;
 
-        public DiscountService(IMapper mapper, IDiscountRepository discountRepository)
+        public DiscountService(IMapper mapper, DataBaseContext dataBaseContext)
         {
             _mapper = mapper;
-            _discountRepository = discountRepository;
+            _dataBaseContext = dataBaseContext;
         }
 
-        public async Task<CreateDiscountResponceModel> CreateAsync(CreateDiscountModel create,
-            CancellationToken cancellationToken = default)
+        public async Task<ApiResult<CreateDiscountResponceModel>> CreateAsync(CreateDiscountModel create)
         {
-            var todoItem = _mapper.Map<Discount>(create);
+            var discountEntity = _mapper.Map<Discount>(create);
+            discountEntity.CreatedOn = DateTime.UtcNow;
 
-            return new CreateDiscountResponceModel
+            _dataBaseContext.Discounts.Add(discountEntity);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<CreateDiscountResponceModel>.Success(new CreateDiscountResponceModel
             {
-                Id = (await _discountRepository.AddAsync(todoItem)).Id
-            };
+                Id = discountEntity.Id
+            });
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<ApiResult<bool>> DeleteAsync(Guid id)
         {
-            var todoItem = await _discountRepository.GetFirstAsync(d => d.Id == id);
-            if(todoItem == null) 
-                return false;
-
-            await _discountRepository.DeleteAsync(todoItem);
-            return true;
-        }
-
-        public async Task<List<DiscountResponceModel>> GetAllAsync()
-        {
-            var responce = await _discountRepository.GetAllAsync(d => true);
-            return _mapper.Map<List<DiscountResponceModel>>(responce);
-        }
-
-        public async Task<DiscountResponceModel> GetByIdAsync(Guid id)
-        {
-            var todoItem = await _discountRepository.GetFirstAsync(d => d.Id == id);
-            if(todoItem == null)
-                throw new ArgumentNullException(nameof(todoItem));
-
-            return _mapper.Map<DiscountResponceModel>(todoItem);
-        }
-
-        public async Task<UpdateDiscountResponceModel> UpdateAsync(Guid id, 
-            UpdateDiscountModel update, CancellationToken cancellationToken = default)
-        {
-            var todoItem = await _discountRepository.GetFirstAsync(d => d.Id == id);
-
-            _mapper.Map(update, todoItem);
-
-            return new UpdateDiscountResponceModel()
+            var discount = _dataBaseContext.Discounts.FirstOrDefault(x=> x.Id == id);
+            if (discount == null)
             {
-                Id = (await _discountRepository.UpdateAsync(todoItem)).Id
-            };
+                return ApiResult<bool>.Failure(new List<string> { "Discount not found" });
+            }
+
+            _dataBaseContext.Discounts.Remove(discount);
+            await _dataBaseContext.SaveChangesAsync();
+            
+            return ApiResult<bool>.Success(true);
+        }
+
+        public async Task<ApiResult<List<DiscountResponceModel>>> GetAllAsync()
+        {
+            var discouts = await _dataBaseContext.Discounts
+                .AsNoTracking()
+                .ProjectTo<DiscountResponceModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return ApiResult<List<DiscountResponceModel>>.Success(discouts);
+        }
+
+        public async Task<ApiResult<DiscountResponceModel>> GetByIdAsync(Guid id)
+        {
+            var discount = await _dataBaseContext.Discounts
+                .AsNoTracking()
+                .ProjectTo<DiscountResponceModel>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (discount == null)
+            {
+                return ApiResult<DiscountResponceModel>.Failure(new List<string> { "Discount not found" });
+            }
+
+            return ApiResult<DiscountResponceModel>.Success(discount);
+        }
+
+        public async Task<ApiResult<UpdateDiscountResponceModel>> UpdateAsync(Guid id, UpdateDiscountModel update)
+        {
+            var discount = await _dataBaseContext.Discounts.FirstOrDefaultAsync(d => d.Id == id);
+            if (discount == null)
+            {
+                return ApiResult<UpdateDiscountResponceModel>.Failure(new List<string> { "Discount not found" });
+            }
+
+            _mapper.Map(update, discount);
+            discount.UpdatedOn = DateTime.UtcNow;
+            _dataBaseContext.Discounts.Update(discount);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<UpdateDiscountResponceModel>.Success(new UpdateDiscountResponceModel
+            {
+                Id = discount.Id
+            });
         }
     }
 }

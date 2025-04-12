@@ -1,4 +1,4 @@
-﻿namespace ParkingUZ.DataAccess.Authentication
+﻿namespace ParkingUZ.Application.Helpers.GenerateJwt
 {
     public static class TableName
     {

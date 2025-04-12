@@ -1,9 +1,10 @@
 ﻿using ParkingUZ.Application.DataTransferObject.Authentication;
 using FluentValidation;
+using ParkingUZ.Application.Models.User;
 
 namespace ParkingUZ.Application.Validators
 {
-    public class LoginDtoValidator : AbstractValidator<LoginDTO>
+    public class LoginDtoValidator : AbstractValidator<LoginUserModel>
     {
         public LoginDtoValidator()
         {

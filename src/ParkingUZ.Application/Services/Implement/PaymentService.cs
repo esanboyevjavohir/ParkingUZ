@@ -1,68 +1,97 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using ParkingUZ.Application.Models;
+using ParkingUZ.Application.Models.ParkingZone;
 using ParkingUZ.Application.Models.Payment;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Core.Entities;
-using ParkingUZ.DataAccess.Repositories.Interface;
+using ParkingUZ.DataAccess.Persistence;
 
 namespace ParkingUZ.Application.Services.Implement
 {
     public class PaymentService : IPaymentService
     {
         private readonly IMapper _mapper;
-        private readonly IPaymentRepository _paymentRepository;
+        private readonly DataBaseContext _dataBaseContext;
 
-        public PaymentService(IMapper mapper, IPaymentRepository paymentRepository)
+        public PaymentService(IMapper mapper, DataBaseContext dataBaseContext)
         {
             _mapper = mapper;
-            _paymentRepository = paymentRepository;
+            _dataBaseContext = dataBaseContext;
         }
 
-        public async Task<CreatePaymentResponceModel> CreateAsync(CreatePaymentModel create,
-            CancellationToken cancellationToken = default)
+        public async Task<ApiResult<CreatePaymentResponceModel>> CreateAsync(CreatePaymentModel create)
         {
-            var todoItem = _mapper.Map<Payment>(create);
+            var createModel = _mapper.Map<Payment>(create);
+            createModel.CreatedOn = DateTime.UtcNow;
 
-            return new CreatePaymentResponceModel
+            _dataBaseContext.Payments.Add(createModel);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<CreatePaymentResponceModel>.Success(new CreatePaymentResponceModel
             {
-                Id = (await _paymentRepository.AddAsync(todoItem)).Id
-            };
+                Id = createModel.Id
+            });
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<ApiResult<bool>> DeleteAsync(Guid id)
         {
-            var todoItem = await _paymentRepository.GetFirstAsync(p => p.Id == id);
-            if (todoItem == null) return false;
-
-            await _paymentRepository.DeleteAsync(todoItem);
-            return true;
-        }
-
-        public async Task<List<PaymentResponceModel>> GetAllAsync()
-        {
-            var res = await _paymentRepository.GetAllAsync(p => true);
-            return _mapper.Map<List<PaymentResponceModel>>(res);
-        }
-
-        public async Task<PaymentResponceModel> GetByIdAsync(Guid id)
-        {
-            var todoItem = await _paymentRepository.GetFirstAsync(p => p.Id==id);
-            if (todoItem == null)
-                throw new Exception("Payment not found");
-
-            return _mapper.Map<PaymentResponceModel>(todoItem);
-        }
-
-        public async Task<UpdatePaymentResponceModel> UpdateAsync(Guid id,
-            UpdatePaymentModel update, CancellationToken cancellationToken = default)
-        {
-            var item = await _paymentRepository.GetFirstAsync(p=> p.Id == id);
-
-            _mapper.Map(update, item);
-
-            return new UpdatePaymentResponceModel
+            var delete = _dataBaseContext.Payments.FirstOrDefault(x => x.Id == id);
+            if (delete == null)
             {
-                Id = (await _paymentRepository.UpdateAsync(item)).Id
-            };
+                return ApiResult<bool>.Failure(new List<string> { "ParkingZones not found" });
+            }
+
+            _dataBaseContext.Payments.Remove(delete);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<bool>.Success(true);
+        }
+
+        public async Task<ApiResult<List<PaymentResponceModel>>> GetAllAsync()
+        {
+            var getAll = await _dataBaseContext.Payments
+                .AsNoTracking()
+                .ProjectTo<PaymentResponceModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return ApiResult<List<PaymentResponceModel>>.Success(getAll);
+        }
+
+        public async Task<ApiResult<PaymentResponceModel>> GetByIdAsync(Guid id)
+        {
+            var getById = await _dataBaseContext.Payments
+                .AsNoTracking()
+                .ProjectTo<PaymentResponceModel>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (getById == null)
+            {
+                return ApiResult<PaymentResponceModel>.Failure(
+                                new List<string> { "ParkingZones not found" });
+            }
+
+            return ApiResult<PaymentResponceModel>.Success(getById);
+        }
+
+        public async Task<ApiResult<UpdatePaymentResponceModel>> UpdateAsync(Guid id, UpdatePaymentModel update)
+        {
+            var updateModel = await _dataBaseContext.Payments.FirstOrDefaultAsync(d => d.Id == id);
+            if (updateModel == null)
+            {
+                return ApiResult<UpdatePaymentResponceModel>.Failure(new List<string> { "ParkingZone not found" });
+            }
+
+            _mapper.Map(update, updateModel);
+            updateModel.UpdatedOn = DateTime.UtcNow;
+            _dataBaseContext.Payments.Update(updateModel);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<UpdatePaymentResponceModel>.Success(new UpdatePaymentResponceModel
+            {
+                Id = updateModel.Id
+            });
         }
     }
 }

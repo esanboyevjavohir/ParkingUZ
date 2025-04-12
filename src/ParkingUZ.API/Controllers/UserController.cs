@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ParkingUZ.Application.DTO;
+using ParkingUZ.Application.Helpers.GenerateJwt;
+using ParkingUZ.Application.Models.User;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.DataAccess;
-using ParkingUZ.DataAccess.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace ParkingUZ.API.Controllers
@@ -57,14 +57,14 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpPost("Create-User")]
-        public async Task<IActionResult> AddUser(UserForCreationDTO userForCreationDTO)
+        public async Task<IActionResult> AddUser(CreateUserModel userForCreationDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                var createUser = await _userService.AddUserAsync(userForCreationDTO);
+                var createUser = await _userService.SignUpAsync(userForCreationDTO);
                 var accesToken = _jwtTokenHandler.GenerateAccesToken(createUser);
                 var refreshToken = _jwtTokenHandler.GenerateRefreshToken();
 
@@ -81,7 +81,7 @@ namespace ParkingUZ.API.Controllers
             }
         }
 
-        [HttpPut("Update-User/{id}")]
+        /*[HttpPut("Update-User/{id}")]
         public async Task<IActionResult> UpdateUser([FromRoute] Guid id,
             [FromBody] UpdateUserDTO userDto)
         {
@@ -97,7 +97,7 @@ namespace ParkingUZ.API.Controllers
             {
                 return NotFound(new { message = ex.Message });
             }
-        }
+        }*/
 
         [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid id)

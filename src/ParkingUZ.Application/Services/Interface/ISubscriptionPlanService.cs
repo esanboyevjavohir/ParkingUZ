@@ -1,4 +1,5 @@
-﻿using ParkingUZ.Application.Models.SubscriptionPlan;
+﻿using ParkingUZ.Application.Models;
+using ParkingUZ.Application.Models.SubscriptionPlan;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,10 @@ namespace ParkingUZ.Application.Services.Interface
 {
     public interface ISubscriptionPlanService
     {
-        Task<SubscriptionResponceModel> GetByIdAsync(Guid id);
-        Task<List<SubscriptionResponceModel>> GetAllAsync();    
-        Task<CreateSubscriptionResponceModel> CreateAsync(CreateSubscriptionModel create,
-            CancellationToken cancellationToken = default);
-        Task<UpdateSubscriptionResponceModel> UpdateAsync(Guid id,
-            UpdateSubscriptionModel update, CancellationToken cancellationToken = default);
-        Task<bool> DeleteAsync(Guid id);
+        Task<ApiResult<SubscriptionResponceModel>> GetByIdAsync(Guid id);
+        Task<ApiResult<List<SubscriptionResponceModel>>> GetAllAsync();    
+        Task<ApiResult<CreateSubscriptionResponceModel>> CreateAsync(CreateSubscriptionModel create);
+        Task<ApiResult<UpdateSubscriptionResponceModel>> UpdateAsync(Guid id, UpdateSubscriptionModel update);
+        Task<ApiResult<bool>> DeleteAsync(Guid id);
     }
 }

@@ -1,15 +1,14 @@
-﻿using ParkingUZ.Application.Models.Review;
+﻿using ParkingUZ.Application.Models;
+using ParkingUZ.Application.Models.Review;
 
 namespace ParkingUZ.Application.Services.Interface
 {
     public interface IReviewService
     {
-        Task<ReviewResponceModel> GetByIdAsync(Guid id);
-        Task<List<ReviewResponceModel>> GetAllAsync();
-        Task<CreateReviewResponceModel> CreateAsync(CreateReviewModel create,
-            CancellationToken cancellationToken = default);
-        Task<UpdateReviewResponceModel> UpdateAsync(Guid id, UpdateReviewModel update,
-            CancellationToken cancellationToken = default);
-        Task<bool> DeleteAsync(Guid id);
+        Task<ApiResult<ReviewResponceModel>> GetByIdAsync(Guid id);
+        Task<ApiResult<List<ReviewResponceModel>>> GetAllAsync();
+        Task<ApiResult<CreateReviewResponceModel>> CreateAsync(CreateReviewModel create);
+        Task<ApiResult<UpdateReviewResponceModel>> UpdateAsync(Guid id, UpdateReviewModel update);
+        Task<ApiResult<bool>> DeleteAsync(Guid id);
     }
 }

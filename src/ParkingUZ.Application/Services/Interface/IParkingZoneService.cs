@@ -1,4 +1,5 @@
-﻿using ParkingUZ.Application.Models.ParkingZone;
+﻿using ParkingUZ.Application.Models;
+using ParkingUZ.Application.Models.ParkingZone;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,10 @@ namespace ParkingUZ.Application.Services.Interface
 {
     public interface IParkingZoneService
     {
-        Task<ParkingZoneResponceModel> GetByIdAsync(Guid id);
-        Task<List<ParkingZoneResponceModel>> GetAllAsync();
-        Task<CreateParkingZoneResponceModel> CreateAsync(CreateParkingZoneModel create,
-            CancellationToken cancellationToken = default);
-        Task<UpdateParkingZoneResponceModel> UpdateAsync(Guid id, UpdateParkingZoneModel update,
-            CancellationToken cancellationToken = default);
-        Task<bool> DeleteAsync(Guid id);
+        Task<ApiResult<ParkingZoneResponceModel>> GetByIdAsync(Guid id);
+        Task<ApiResult<List<ParkingZoneResponceModel>>> GetAllAsync();
+        Task<ApiResult<CreateParkingZoneResponceModel>> CreateAsync(CreateParkingZoneModel create);
+        Task<ApiResult<UpdateParkingZoneResponceModel>> UpdateAsync(Guid id, UpdateParkingZoneModel update);
+        Task<ApiResult<bool>> DeleteAsync(Guid id);
     }
 }

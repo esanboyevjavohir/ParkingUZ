@@ -1,70 +1,97 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using ParkingUZ.Application.Models;
+using ParkingUZ.Application.Models.QRCode;
 using ParkingUZ.Application.Models.Reservation;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Core.Entities;
-using ParkingUZ.DataAccess.Repositories.Interface;
+using ParkingUZ.DataAccess.Persistence;
 
 namespace ParkingUZ.Application.Services.Implement
 {
     public class ReservationService : IReservationService
     {
         private readonly IMapper _mapper;
-        private readonly IReservationRepository _reservationRepository;
+        private readonly DataBaseContext _dataBaseContext;
 
-        public ReservationService(IMapper mapper, 
-            IReservationRepository reservationRepository)
+        public ReservationService(IMapper mapper, DataBaseContext dataBaseContext)
         {
             _mapper = mapper;
-            _reservationRepository = reservationRepository;
+            _dataBaseContext = dataBaseContext;
         }
 
-        public async Task<CreateReservationResponceModel> CreateAsync(CreateReservationModel create,
-            CancellationToken cancellationToken = default)
+        public async Task<ApiResult<CreateReservationResponceModel>> CreateAsync(CreateReservationModel create)
         {
-            var item = _mapper.Map<Reservation>(create);
+            var createModel = _mapper.Map<Reservation>(create);
+            createModel.CreatedOn = DateTime.UtcNow;
 
-            return new CreateReservationResponceModel
+            _dataBaseContext.Reservations.Add(createModel);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<CreateReservationResponceModel>.Success(new CreateReservationResponceModel
             {
-                Id = (await _reservationRepository.AddAsync(item)).Id,
-            };
+                Id = createModel.Id
+            });
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<ApiResult<bool>> DeleteAsync(Guid id)
         {
-            var res = await _reservationRepository.GetFirstAsync(r=> r.Id == id);
-            if (res == null) return false;
-
-            await _reservationRepository.DeleteAsync(res);
-            return true;
-        }
-
-        public async Task<List<ReservationResponceModel>> GetAllAsync()
-        {
-            var items = await _reservationRepository.GetAllAsync(r => true);
-
-            return _mapper.Map<List<ReservationResponceModel>>(items);
-        }
-
-        public async Task<ReservationResponceModel> GetByIdAsync(Guid id)
-        {
-            var item = await _reservationRepository.GetFirstAsync(r => r.Id == id);
-            if (item == null)
-                throw new Exception("Reservation not found");
-
-            return _mapper.Map<ReservationResponceModel>(item);
-        }
-
-        public async Task<UpdateReservationResponceModel> UpdateAsync(Guid id, 
-            UpdateReservationModel update, CancellationToken cancellationToken = default)
-        {
-            var item = await _reservationRepository.GetFirstAsync(r => r.Id == id);
-
-            _mapper.Map(update, item);
-
-            return new UpdateReservationResponceModel
+            var delete = _dataBaseContext.Reservations.FirstOrDefault(x => x.Id == id);
+            if (delete == null)
             {
-                Id = (await _reservationRepository.UpdateAsync(item)).Id,
-            };
+                return ApiResult<bool>.Failure(new List<string> { "ParkingZones not found" });
+            }
+
+            _dataBaseContext.Reservations.Remove(delete);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<bool>.Success(true);
+        }
+
+        public async Task<ApiResult<List<ReservationResponceModel>>> GetAllAsync()
+        {
+            var getAll = await _dataBaseContext.Reservations
+                .AsNoTracking()
+                .ProjectTo<ReservationResponceModel>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return ApiResult<List<ReservationResponceModel>>.Success(getAll);
+        }
+
+        public async Task<ApiResult<ReservationResponceModel>> GetByIdAsync(Guid id)
+        {
+            var getById = await _dataBaseContext.Reservations
+                .AsNoTracking()
+                .ProjectTo<ReservationResponceModel>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (getById == null)
+            {
+                return ApiResult<ReservationResponceModel>.Failure(
+                                new List<string> { "ParkingZones not found" });
+            }
+
+            return ApiResult<ReservationResponceModel>.Success(getById);
+        }
+
+        public async Task<ApiResult<UpdateReservationResponceModel>> UpdateAsync(Guid id, UpdateReservationModel update)
+        {
+            var updateModel = await _dataBaseContext.Reservations.FirstOrDefaultAsync(d => d.Id == id);
+            if (updateModel == null)
+            {
+                return ApiResult<UpdateReservationResponceModel>.Failure(new List<string> { "ParkingZone not found" });
+            }
+
+            _mapper.Map(update, updateModel);
+            updateModel.UpdatedOn = DateTime.UtcNow;
+            _dataBaseContext.Reservations.Update(updateModel);
+            await _dataBaseContext.SaveChangesAsync();
+
+            return ApiResult<UpdateReservationResponceModel>.Success(new UpdateReservationResponceModel
+            {
+                Id = updateModel.Id
+            });
         }
     }
 }

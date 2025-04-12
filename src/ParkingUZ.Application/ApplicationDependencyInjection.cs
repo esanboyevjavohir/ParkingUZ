@@ -8,10 +8,10 @@ using ParkingUZ.DataAccess;
 using ParkingUZ.Shared.Services.Impl;
 using ParkingUZ.Shared.Services;
 using Microsoft.Extensions.Hosting;
-using ParkingUZ.Application.DTO;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Application.Services.Implement;
 using ParkingUZ.Application.MappingProfiles;
+using ParkingUZ.Application.Models.User;
 
 namespace ParkingUZ.Application
 {
@@ -41,9 +41,8 @@ namespace ParkingUZ.Application
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<ISubscriptionPlanService, SubscriptionPlanService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IValidator<UserForCreationDTO>, UserForCreationDtoValidator>();
-            services.AddScoped<IValidator<UpdateUserDTO>, UserForUpdateDtoValidator>();
-            services.AddScoped<IValidator<LoginDTO>, LoginDtoValidator>();
+            services.AddScoped<IValidator<CreateUserModel>, UserForCreationDtoValidator>();
+            services.AddScoped<IValidator<LoginUserModel>, LoginDtoValidator>();
         }
 
         private static void RegisterAutoMapper(this IServiceCollection services)

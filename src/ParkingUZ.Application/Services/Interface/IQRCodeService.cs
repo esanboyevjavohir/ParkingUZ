@@ -1,15 +1,14 @@
-﻿using ParkingUZ.Application.Models.QRCode;
+﻿using ParkingUZ.Application.Models;
+using ParkingUZ.Application.Models.QRCode;
 
 namespace ParkingUZ.Application.Services.Interface
 {
     public interface IQRCodeService
     {
-        Task<QRCodeResponceModel> GetByIdAsync(Guid id);
-        Task<List<QRCodeResponceModel>> GetAllAsync();
-        Task<CreateQRCodeResponceModel> CreateAsync(CreateQRCodeModel create,
-            CancellationToken cancellationToken = default);
-        Task<UpdateQRCodeResponceModel> UpdateAsync(Guid id, UpdateQRCodeModel update,
-            CancellationToken cancellationToken = default);
-        Task<bool> DeleteAsync(Guid id);
+        Task<ApiResult<QRCodeResponceModel>> GetByIdAsync(Guid id);
+        Task<ApiResult<List<QRCodeResponceModel>>> GetAllAsync();
+        Task<ApiResult<CreateQRCodeResponceModel>> CreateAsync(CreateQRCodeModel create);
+        Task<ApiResult<UpdateQRCodeResponceModel>> UpdateAsync(Guid id, UpdateQRCodeModel update);
+        Task<ApiResult<bool>> DeleteAsync(Guid id);
     }
 }

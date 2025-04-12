@@ -1,4 +1,3 @@
-using ParkingUZ.DataAccess.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -12,6 +11,7 @@ using ParkingUZ.Shared.Services;
 using ParkingUZ.DataAccess;
 using ParkingUZ.Application;
 using Microsoft.Extensions.Options;
+using ParkingUZ.Application.Helpers.GenerateJwt;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,37 +1,39 @@
-﻿using FluentValidation;
+﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using ParkingUZ.Application.DataTransferObject.Authentication;
-using ParkingUZ.Application.DTO;
+using ParkingUZ.Application.Helpers.GenerateJwt;
+using ParkingUZ.Application.Models;
+using ParkingUZ.Application.Models.User;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Core.Entities;
 using ParkingUZ.DataAccess;
-using ParkingUZ.DataAccess.Authentication;
-using ParkingUZ.DataAccess.Repositories.Interface;
+using ParkingUZ.DataAccess.Persistence;
 
 namespace ParkingUZ.Application.Services.Implement
 {
     public class UserService : IUserService
     {
-        private readonly IUserRepository _userRepo;
+        private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
+        private readonly DataBaseContext _dataBaseContext;
+        private readonly IJwtTokenHandler _jwtTokenHandler;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly IValidator<UserForCreationDTO> _createUserValidator;
-        private readonly IValidator<LoginDTO> _loginValidator;
-        private readonly IValidator<UpdateUserDTO> _updateUserValidator;
+        private readonly IValidator<CreateUserModel> _createUserValidator;
+        private readonly IValidator<LoginUserModel> _loginValidator;
 
-        public UserService(IUserRepository userRepo, 
+        public UserService(
             IPasswordHasher passwordHasher, 
-            IValidator<UserForCreationDTO> createUserValidator, 
-            IValidator<LoginDTO> loginValidator, 
-            IValidator<UpdateUserDTO> updateUserValidator)
+            IValidator<CreateUserModel> createUserValidator, 
+            IValidator<LoginUserModel> loginValidator)
         {
-            _userRepo = userRepo;
             _passwordHasher = passwordHasher;
             _createUserValidator = createUserValidator;
             _loginValidator = loginValidator;
-            _updateUserValidator = updateUserValidator;
         }
 
-        public async Task<User> AddUserAsync(UserForCreationDTO userForCreationDTO)
+        public async Task<ApiResult<CreateUserResponseModel>> SignUpAsync(CreateUserModel userForCreationDTO)
         {
             var validationResult = await _createUserValidator.ValidateAsync(userForCreationDTO);
             if(!validationResult.IsValid)
@@ -58,17 +60,18 @@ namespace ParkingUZ.Application.Services.Implement
             };
 
             var res = await _userRepo.AddAsync(user);
-            var result = new UserResponceDTO
+            var result = new UserResponceModel
             {
                 Name = userForCreationDTO.Name!,
                 Email = userForCreationDTO.Email!,
-                PhoneNumber = userForCreationDTO.PhoneNumber!
+                PhoneNumber = userForCreationDTO.PhoneNumber!,
+                Role = userForCreationDTO.Role
             };
 
             return res;
         }
 
-        public async Task<AuthorizationUserDTO> AuthenticateAsync(LoginDTO loginDTO)
+        public async Task<ApiResult<LoginResponseModel>> LoginAsync(LoginUserModel loginDTO)
         {
             var validationResult = await _loginValidator.ValidateAsync(loginDTO);
             if (!validationResult.IsValid)
@@ -86,13 +89,13 @@ namespace ParkingUZ.Application.Services.Implement
             return MapToDTOLogin(user);
         }
 
-        private AuthorizationUserDTO MapToDTOLogin(User user)
+        private LoginResponseModel MapToDTOLogin(User user)
         {
-            return new AuthorizationUserDTO()
+            return new LoginResponseModel()
             {
-                Password = user.Password,
                 Email = user.Email,
-                Role = user.Role
+                Role = user.Role,
+                RefreshToken = user.RefreshToken
             };
         }
 
@@ -106,11 +109,11 @@ namespace ParkingUZ.Application.Services.Implement
             return true;
         }
 
-        public async Task<List<UserResponceDTO>> GetAllAsync()
+        public async Task<List<UserResponceModel>> GetAllAsync()
         {
             var users = await _userRepo.GetAllAsync(u => true);
 
-            return users.Select(a => new UserResponceDTO
+            return users.Select(a => new UserResponceModel
             {
                 Id = a.Id,
                 Name = a.Name,
@@ -119,13 +122,13 @@ namespace ParkingUZ.Application.Services.Implement
             }).ToList();
         }
 
-        public async Task<UserResponceDTO> GetByIdAsync(Guid id)
+        public async Task<UserResponceModel> GetByIdAsync(Guid id)
         {
             var user = await _userRepo.GetFirstAsync(a => a.Id == id);
             if(user == null)
                 throw new ArgumentNullException(nameof(user));
 
-            return new UserResponceDTO()
+            return new UserResponceModel()
             {
                 Id = user.Id,
                 Name = user.Name,
@@ -134,12 +137,12 @@ namespace ParkingUZ.Application.Services.Implement
             };
         }
 
-        public async Task<User> GetUserByEmailAsync(string email)
+        public async Task<UserResponseModel> GetUserByEmailAsync(string email)
         {
             return await _userRepo.GetUserByEmailAsync(email);
         }
 
-        public async Task<User> UpdateUserAsync(Guid id, UpdateUserDTO updateUserDTO)
+        /*public async Task<User> UpdateUserAsync(Guid id, UpdateUserDTO updateUserDTO)
         {
             var validationResult = await _updateUserValidator.ValidateAsync(updateUserDTO);
             if (!validationResult.IsValid)
@@ -165,7 +168,7 @@ namespace ParkingUZ.Application.Services.Implement
 
             await _userRepo.UpdateAsync(user);
             return user;
-        }
+        }*/
 
         public async Task<bool> VerifyPassword(User user, string password)
         {
