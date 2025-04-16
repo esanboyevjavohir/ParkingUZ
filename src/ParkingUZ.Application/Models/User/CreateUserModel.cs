@@ -20,8 +20,6 @@ namespace ParkingUZ.Application.Models.User
         [RegularExpression(@"^\+[0-9]*$", ErrorMessage = "Nomer '+' belgisi va faqat raqamlardan iborat bo‘lishi kerak")]
         public string? PhoneNumber { get; set; }
 
-        public UserRole Role { get; set; }
-
         [DefaultValue("")]
         public string? Password { get; set; }
     }

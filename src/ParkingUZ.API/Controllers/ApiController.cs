@@ -2,8 +2,8 @@
 
 namespace ParkingUZ.API.Controllers
 {
-    [ApiController]
     [Route("Api/[controller]")]
+    [ApiController]
     public class ApiController : ControllerBase
     {
     }

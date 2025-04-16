@@ -13,7 +13,7 @@ namespace ParkingUZ.Application.Services.Interface
         Task<ApiResult<DiscountResponceModel>> GetByIdAsync(Guid id);
         Task<ApiResult<List<DiscountResponceModel>>> GetAllAsync();
         Task<ApiResult<CreateDiscountResponceModel>> CreateAsync(CreateDiscountModel create);
-        Task<ApiResult<UpdateDiscountResponceModel>> UpdateAsync(Guid id, UpdateDiscountModel update);
+        Task<ApiResult<UpdateDiscountResponceModel>> UpdateAsync(UpdateDiscountModel update);
         Task<ApiResult<bool>> DeleteAsync(Guid id);
     }
 }

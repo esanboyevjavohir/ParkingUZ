@@ -1,25 +1,88 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using ParkingUZ.Application.Helpers.GenerateJwt;
+using ParkingUZ.Application.Models;
 using ParkingUZ.Application.Models.User;
 using ParkingUZ.Application.Services.Interface;
+using ParkingUZ.Core.Entities;
 using ParkingUZ.DataAccess;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace ParkingUZ.API.Controllers
 {
-    public class UserController : Controller
+    public class UserController : ApiController
     {
         private readonly IUserService _userService;
-        private readonly IJwtTokenHandler _jwtTokenHandler;
-        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public UserController(IUserService userService,
-            IJwtTokenHandler jwtTokenHandler, 
-            IWebHostEnvironment webHostEnvironment)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _jwtTokenHandler = jwtTokenHandler;
-            _webHostEnvironment = webHostEnvironment;
+        }
+
+        [HttpPost("Registration")]
+        public async Task<ActionResult<CreateUserResponseModel>> UserSignUpAsync(CreateUserModel createUserModel)
+        {
+            var create = await _userService.SignUpAsync(createUserModel);
+            if (!create.Succedded)
+                return BadRequest(create);
+
+            return Created("", create);
+        }
+
+        [HttpPost("Login")]
+        public async Task<ApiResult<LoginResponseModel>> UserLoginAsync(LoginUserModel loginUserModel)
+        {
+            var result = await _userService.LoginAsync(loginUserModel);
+
+            return result;
+        }
+
+        [HttpPost("ValidateAndRefreshToken")]
+        public async Task<IActionResult> RefreshTokenAsync(Guid id, string refreshToken)
+        {
+            var result = await _userService.ValidateAndRefreshToken(id, refreshToken);
+            return Ok(result);
+        }
+
+        [HttpPost("SendOtpCode")]
+        public async Task<ApiResult<bool>> SendOtpCodeAsync(Guid userId)
+        {
+            var result = await _userService.SendOtpCode(userId);
+            return result;
+        }
+
+        [HttpPost("ResendOtpCode")]
+        public async Task<ApiResult<bool>> ResendOtpCodeAsync(Guid userId)
+        {
+            var result = await _userService.ResendOtpCode(userId);
+            return result;
+        }
+
+        [HttpPost("VerifyOtpAsync")]
+        public async Task<ApiResult<bool>> VerifyOtpCodeAsync(string otpCode, Guid userId)
+        {
+            var result = await _userService.VerifyOtpCode(otpCode, userId);
+            return result;
+        }
+
+        [HttpPost("Forgot-Password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordModel email)
+        {
+            var result = await _userService.ForgotPasswordAsync(email.Email);
+            if(!result.Succedded)
+                return BadRequest(result);
+
+            return Ok(result);  
+        }
+
+        [HttpPost("Reset-Password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
+        {
+            var result = await _userService.ResetPasswordAsync(model);
+            if (!result.Succedded)
+                return BadRequest(result);
+
+            return Ok(result);
         }
 
         [HttpGet("GetById")]
@@ -55,49 +118,6 @@ namespace ParkingUZ.API.Controllers
                 return NotFound(new { message = ex.Message });
             }
         }
-
-        [HttpPost("Create-User")]
-        public async Task<IActionResult> AddUser(CreateUserModel userForCreationDTO)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                var createUser = await _userService.SignUpAsync(userForCreationDTO);
-                var accesToken = _jwtTokenHandler.GenerateAccesToken(createUser);
-                var refreshToken = _jwtTokenHandler.GenerateRefreshToken();
-
-                return Ok(new
-                {
-                    AccesToken = new JwtSecurityTokenHandler().WriteToken(accesToken),
-                    RefreshToken = refreshToken,
-                    User = createUser
-                });
-            }
-            catch (Exception ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-        }
-
-        /*[HttpPut("Update-User/{id}")]
-        public async Task<IActionResult> UpdateUser([FromRoute] Guid id,
-            [FromBody] UpdateUserDTO userDto)
-        {
-            if(!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                var res = await _userService.UpdateUserAsync(id, userDto);
-                return res == null? NotFound() : Ok(res);
-            }
-            catch (Exception ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-        }*/
 
         [HttpDelete("Delete/{Id}")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid id)

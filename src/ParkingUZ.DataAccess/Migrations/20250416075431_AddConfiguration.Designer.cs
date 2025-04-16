@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ParkingUZ.DataAccess.Persistence;
@@ -11,9 +12,11 @@ using ParkingUZ.DataAccess.Persistence;
 namespace ParkingUZ.DataAccess.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250416075431_AddConfiguration")]
+    partial class AddConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -517,6 +520,9 @@ namespace ParkingUZ.DataAccess.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(1000)
@@ -558,10 +564,10 @@ namespace ParkingUZ.DataAccess.Migrations
                             Id = new Guid("bc56836e-0345-4f01-a883-47f39e32e079"),
                             Email = "adminjon@gmail.com",
                             Name = "Adminjon Adminov",
-                            PasswordHash = "AKlJ3Kv+/m1pYHf4ZKL4iEoWm1d6BD8QKGrD4w5e2Go=",
+                            PasswordHash = "xV0BJa6RsmnTyrkd4Zg3aAG2o65JHqGqCEjU6QFzzX8=",
                             PhoneNumber = "+999999999111",
                             Role = 1,
-                            Salt = "5bd421f2-1e10-4dd9-81ff-e26c83e33b2f"
+                            Salt = "61fc4177-1226-4a48-b58c-a7475412e31a"
                         });
                 });
 

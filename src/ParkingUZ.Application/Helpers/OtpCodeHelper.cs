@@ -1,6 +1,6 @@
 ﻿namespace ParkingUZ.Application.Helpers
 {
-    public class OtpCodeHelper
+    public static class OtpCodeHelper
     {
         public static string GenerateOtpCode(int length = 6)
         {

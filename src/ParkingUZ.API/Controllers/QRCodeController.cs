@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ParkingUZ.Application.Models;
 using ParkingUZ.Application.Models.QRCode;
 using ParkingUZ.Application.Services.Interface;
@@ -15,12 +16,16 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpGet("GetById/{id}")]
+        [Authorize(Policy = "AdminOrCandidate")]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
             {
                 var responce = await _qrCodeService.GetByIdAsync(id);
-                return Ok(ApiResult<QRCodeResponceModel>.Success(responce));
+                if (!responce.Succedded)
+                    return BadRequest(responce);
+
+                return Ok(responce);
             }
             catch (Exception ex)
             {
@@ -29,13 +34,18 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize(Policy = "AdminOrCandidate")]
         public async Task<IActionResult> GetAll()
         {
             var responce = await _qrCodeService.GetAllAsync();
-            return Ok(ApiResult<IEnumerable<QRCodeResponceModel>>.Success(responce));
+            if (!responce.Succedded)
+                return BadRequest(responce);
+
+            return Ok(responce);
         }
 
         [HttpPost("Create")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Create(CreateQRCodeModel model)
         {
             if(!ModelState.IsValid) 
@@ -44,7 +54,10 @@ namespace ParkingUZ.API.Controllers
             try
             {
                 var responce = await _qrCodeService.CreateAsync(model);
-                return Ok(ApiResult<CreateQRCodeResponceModel>.Success(responce));
+                if (!responce.Succedded)    
+                    return BadRequest(responce);
+
+                return Ok(responce);
             }
             catch (Exception ex)
             {
@@ -53,6 +66,7 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpPut("Update/{id:guid}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> UpdateAsync(Guid id, UpdateQRCodeModel model)
         {
             if(!ModelState.IsValid)
@@ -61,7 +75,10 @@ namespace ParkingUZ.API.Controllers
             try
             {
                 var res = await _qrCodeService.UpdateAsync(id, model);
-                return Ok(ApiResult<UpdateQRCodeResponceModel>.Success(res));
+                if(!res.Succedded)
+                    return BadRequest(res);
+
+                return Ok(res);
             }
             catch (Exception ex)
             {
@@ -70,12 +87,16 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpDelete("Delete/{id:guid}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             try
             {
                 var responce = await _qrCodeService.DeleteAsync(id);
-                return Ok(ApiResult<bool>.Success(responce));
+                if(!responce.Succedded)
+                    return BadRequest(responce);
+
+                return Ok(responce);
             }
             catch (Exception ex)
             {

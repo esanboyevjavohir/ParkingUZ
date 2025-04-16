@@ -12,24 +12,31 @@ using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Application.Services.Implement;
 using ParkingUZ.Application.MappingProfiles;
 using ParkingUZ.Application.Models.User;
+using ParkingUZ.Application.Helpers.GenerateJwt;
 
 namespace ParkingUZ.Application
 {
     public static class ApplicationDependencyInjection
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, 
-            IWebHostEnvironment env)
+            IWebHostEnvironment env, IConfiguration configuration)
         {
             services.AddServices(env);
 
             services.RegisterAutoMapper();
 
             services.RegisterCashing();
+
+            services.Configure<JwtOption>(configuration.GetSection("JwtSettings"));
             return services;
         }
 
         private static void AddServices(this IServiceCollection services, IWebHostEnvironment env)
         {
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IJwtTokenHandler, JwtTokenHandler>();
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IClaimService, ClaimService>();
             services.AddScoped<IDiscountService, DiscountService>();
             services.AddScoped<IParkingSpotService, ParkingSpotService>();
@@ -40,9 +47,8 @@ namespace ParkingUZ.Application
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<ISubscriptionPlanService, SubscriptionPlanService>();
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IValidator<CreateUserModel>, UserForCreationDtoValidator>();
-            services.AddScoped<IValidator<LoginUserModel>, LoginDtoValidator>();
+            services.AddScoped<IValidator<ResetPasswordModel>, ResetPasswordValidator>();
         }
 
         private static void RegisterAutoMapper(this IServiceCollection services)

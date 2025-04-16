@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ParkingUZ.DataAccess.Persistence;
@@ -11,9 +12,11 @@ using ParkingUZ.DataAccess.Persistence;
 namespace ParkingUZ.DataAccess.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250413131401_updatedModel")]
+    partial class updatedModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -508,19 +511,16 @@ namespace ParkingUZ.DataAccess.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
@@ -541,9 +541,7 @@ namespace ParkingUZ.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Salt")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp without time zone");
@@ -551,18 +549,6 @@ namespace ParkingUZ.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("User");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("bc56836e-0345-4f01-a883-47f39e32e079"),
-                            Email = "adminjon@gmail.com",
-                            Name = "Adminjon Adminov",
-                            PasswordHash = "AKlJ3Kv+/m1pYHf4ZKL4iEoWm1d6BD8QKGrD4w5e2Go=",
-                            PhoneNumber = "+999999999111",
-                            Role = 1,
-                            Salt = "5bd421f2-1e10-4dd9-81ff-e26c83e33b2f"
-                        });
                 });
 
             modelBuilder.Entity("ParkingUZ.DataAccess.Identity.ApplicationUser", b =>

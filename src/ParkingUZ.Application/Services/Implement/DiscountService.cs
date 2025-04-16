@@ -73,9 +73,9 @@ namespace ParkingUZ.Application.Services.Implement
             return ApiResult<DiscountResponceModel>.Success(discount);
         }
 
-        public async Task<ApiResult<UpdateDiscountResponceModel>> UpdateAsync(Guid id, UpdateDiscountModel update)
+        public async Task<ApiResult<UpdateDiscountResponceModel>> UpdateAsync(UpdateDiscountModel update)
         {
-            var discount = await _dataBaseContext.Discounts.FirstOrDefaultAsync(d => d.Id == id);
+            var discount = await _dataBaseContext.Discounts.FirstOrDefaultAsync(d => d.Id == update.Id);
             if (discount == null)
             {
                 return ApiResult<UpdateDiscountResponceModel>.Failure(new List<string> { "Discount not found" });

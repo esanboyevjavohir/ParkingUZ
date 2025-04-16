@@ -1,7 +1,8 @@
 ﻿namespace ParkingUZ.Application.Models.Discount
 {
-    public class UpdateDiscountModel
+    public class UpdateDiscountModel 
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal DiscountPercent { get; set; }

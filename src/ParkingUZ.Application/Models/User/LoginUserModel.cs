@@ -1,4 +1,5 @@
 ﻿using ParkingUZ.Core.Enums;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ParkingUZ.Application.Models.User
 {
@@ -11,7 +12,6 @@ namespace ParkingUZ.Application.Models.User
     public class LoginResponseModel : BaseResponseModel
     {
         public string Email { get; set; }
-        public UserRole Role { get; set; }
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
     }

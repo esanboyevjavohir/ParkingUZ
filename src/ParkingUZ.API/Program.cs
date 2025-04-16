@@ -12,88 +12,55 @@ using ParkingUZ.DataAccess;
 using ParkingUZ.Application;
 using Microsoft.Extensions.Options;
 using ParkingUZ.Application.Helpers.GenerateJwt;
+using ParkingUZ.Application.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure services
-builder.Services.AddControllers(
-    config => config.Filters.Add(typeof(ValidateModelAttribute))
-);
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
 
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ParkingUZ API", Version = "v1" });
-});
-
-builder.Services.AddSwagger();
-
-builder.Services.AddDataAccess(builder.Configuration)
-    .AddApplication(builder.Environment);
-
-builder.Services.Configure<JwtOption>(builder.Configuration.GetSection("JwtOptions"));
-
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("User", policy =>
-        policy.RequireRole("Role", "User"));
+builder.Services.AddApplication(builder.Environment, builder.Configuration)
+                .AddDataAccess(builder.Configuration);
 
-    options.AddPolicy("Admin", policy =>
-        policy.RequireRole("Role", "Admin"));
-});
+builder.Services.AddAuth(builder.Configuration);
+builder.Services.AddSwagger();
 
-var jwtOption = builder.Configuration.GetSection("JwtOptions").Get<JwtOption>();
-builder.Services.AddAuthentication(options =>
+builder.Services.AddCors(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+    options.AddPolicy("CorsPolicy", policy =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtOption.Issuer,
-        ValidAudience = jwtOption.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtOption.SecretKey))
-    };
+        policy.AllowAnyOrigin()//WithOrigins(allowedOrigins)
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
-
-builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
-var dbContext = scope.ServiceProvider.GetService<DataBaseContext>();
 
 await AutomatedMigration.MigrateAsync(scope.ServiceProvider);
 
 app.UseSwagger();
-app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "ParkingUZ"); });
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-app.UseRouting();
+// Apply CORS middleware before authentication
+app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
-
 app.UseAuthorization();
-
-app.UseMiddleware<PerformanceMiddleware>();
-
-app.UseMiddleware<TransactionMiddleware>();
-
-app.UseMiddleware<ExceptionHandlerMiddlewear>();
 
 app.MapControllers();
 
 app.Run();
 
-namespace ParkingUZ.API
-{
-    public partial class Program { }
-}
+//namespace ParkingUZ.API
+//{
+//    public partial class Program { }
+//}

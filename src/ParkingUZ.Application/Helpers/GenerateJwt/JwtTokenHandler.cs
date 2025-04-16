@@ -18,35 +18,13 @@ namespace ParkingUZ.Application.Helpers.GenerateJwt
         {
             jwtOption = options.Value;
         }
-        public JwtSecurityToken GenerateAccesToken(CreateUserModel user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(CustomClaimNames.Email , user.Email)
-            };
-
-            var authSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(this.jwtOption.SecretKey));
-
-            var token = new JwtSecurityToken(
-                issuer: this.jwtOption.Issuer,
-                audience: this.jwtOption.Audience,
-                expires: DateTime.UtcNow.AddMinutes(this.jwtOption.ExpirationInMinutes),
-                claims: claims,
-                signingCredentials: new SigningCredentials(
-                 key: authSigningKey,
-                 algorithm: SecurityAlgorithms.HmacSha256)
-                );
-            return token;
-        }
-
-        public JwtSecurityToken GenerateAccesToken(User user)
+        public string GenerateAccesToken(User user)
         {
             var claims = new List<Claim>
             {
                 new Claim(CustomClaimNames.Id , user.Id.ToString()),
                 new Claim(CustomClaimNames.Email, user.Email),
-                new Claim(CustomClaimNames.Role , user.Role.ToString())
+                new Claim(CustomClaimNames.Role , user.Role.ToString()),
             };
 
             var authSigningKey = new SymmetricSecurityKey(
@@ -61,7 +39,32 @@ namespace ParkingUZ.Application.Helpers.GenerateJwt
                  key: authSigningKey,
                  algorithm: SecurityAlgorithms.HmacSha256)
                 );
-            return token;
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public string GenerateAccesToken(User user, string token)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(CustomClaimNames.Id , user.Id.ToString()),
+                new Claim(CustomClaimNames.Email, user.Email),
+                new Claim(CustomClaimNames.Role , user.Role.ToString()),
+                new Claim(CustomClaimNames.Token, token)
+            };
+
+            var authSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(this.jwtOption.SecretKey));
+
+            var jwtToken = new JwtSecurityToken(
+                issuer: this.jwtOption.Issuer,
+                audience: this.jwtOption.Audience,
+                expires: DateTime.UtcNow.AddMinutes(this.jwtOption.ExpirationInMinutes),
+                claims: claims,
+                signingCredentials: new SigningCredentials(
+                 key: authSigningKey,
+                 algorithm: SecurityAlgorithms.HmacSha256)
+                );
+            return new JwtSecurityTokenHandler().WriteToken(jwtToken);
         }
 
         public string GenerateRefreshToken()

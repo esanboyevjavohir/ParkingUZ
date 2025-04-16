@@ -7,7 +7,7 @@ namespace ParkingUZ.Application.Helpers.GenerateJwt;
 
 public interface IJwtTokenHandler
 {
-    JwtSecurityToken GenerateAccesToken(CreateUserModel user);
-    JwtSecurityToken GenerateAccesToken(User user);
+    string GenerateAccesToken(User user);
+    string GenerateAccesToken(User user, string sessionToken);
     string GenerateRefreshToken();
 }

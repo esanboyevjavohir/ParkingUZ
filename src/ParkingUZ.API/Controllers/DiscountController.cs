@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ParkingUZ.Application.Models;
 using ParkingUZ.Application.Models.Discount;
@@ -16,12 +17,16 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpGet("GetById/{id}")]
+        [Authorize(Policy = "AdminOrCandidate")]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
             {
                 var responce = await _discountService.GetByIdAsync(id);
-                return Ok(ApiResult<DiscountResponceModel>.Success(responce));
+                if (!responce.Succedded)
+                    return BadRequest(responce);
+
+                return Ok(responce);
             }
             catch(Exception ex)
             {
@@ -30,14 +35,19 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult<ApiResult<List<DiscountResponceModel>>>> GetAll()
+        [Authorize(Policy = "AdminOrCandidate")]
+        public async Task<IActionResult> GetAll()
         {
             var responce = await _discountService.GetAllAsync();
-            return Ok(ApiResult<IEnumerable<DiscountResponceModel>>.Success(responce));
+            if(!responce.Succedded)
+                return BadRequest(responce);
+
+            return Ok(responce);
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> CreateAsync(CreateDiscountModel model)
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<IActionResult> CreateAsync([FromBody] CreateDiscountModel model)
         {
             if(!ModelState.IsValid) 
                 return BadRequest(ModelState);
@@ -45,7 +55,10 @@ namespace ParkingUZ.API.Controllers
             try
             {
                 var responce = await _discountService.CreateAsync(model);
-                return Ok(ApiResult<CreateDiscountResponceModel>.Success(responce));
+                if (!responce.Succedded)
+                    return BadRequest(responce);
+
+                return Ok(responce);
             }
             catch (Exception ex)
             {
@@ -54,15 +67,19 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpPut("Update/{id:guid}")]
-        public async Task<IActionResult> UpdateAsync(Guid id, UpdateDiscountModel model)
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<IActionResult> UpdateAsync(UpdateDiscountModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                var responce = await _discountService.UpdateAsync(id, model);
-                return Ok(ApiResult<UpdateDiscountResponceModel>.Success(responce));
+                var responce = await _discountService.UpdateAsync(model);
+                if(!responce.Succedded)
+                    return BadRequest(responce);
+
+                return Ok(responce);
             }
             catch (Exception ex)
             {
@@ -71,12 +88,16 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpDelete("Delete/{id:guid}")]
-        public async Task<IActionResult> DeleteAsync(Guid id)
+        [Authorize(Policy = "RequireAdminRole")]
+        public async Task<IActionResult> DeleteAsync([FromRoute] Guid id)
         {
             try
             {
                 var result = await _discountService.DeleteAsync(id);
-                return Ok(ApiResult<bool>.Success(result));
+                if (!result.Succedded)
+                    return BadRequest(result);
+
+                return Ok(result);
             }
             catch(Exception ex)
             {

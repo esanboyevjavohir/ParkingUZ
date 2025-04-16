@@ -4,6 +4,7 @@ using ParkingUZ.Application.Models;
 using ParkingUZ.Application.Models.User;
 using ParkingUZ.Core.Entities;
 using ParkingUZ.DataAccess;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ParkingUZ.Application.Services.Interface
 {
@@ -13,9 +14,14 @@ namespace ParkingUZ.Application.Services.Interface
         Task<ApiResult<List<UserResponceModel>>> GetAllAsync();
         Task<ApiResult<UserResponceModel>> GetUserByEmailAsync(string email);
         Task<ApiResult<CreateUserResponseModel>> SignUpAsync(CreateUserModel userForCreationDTO);
+        Task<ApiResult<bool>> SendOtpCode(Guid userId);
+        Task<ApiResult<bool>> ResendOtpCode(Guid userId);
+        Task<ApiResult<bool>> VerifyOtpCode(string code, Guid userId);
         //Task<User> UpdateUserAsync(Guid id, UpdateUserDTO updateUserDTO);
         Task<ApiResult<LoginResponseModel>> LoginAsync(LoginUserModel loginDTO);
+        Task<ApiResult<string>> ValidateAndRefreshToken(Guid id, string refreshToken);
+        Task<ApiResult<bool>> ForgotPasswordAsync(string email);
+        Task<ApiResult<bool>> ResetPasswordAsync(ResetPasswordModel model);
         Task<ApiResult<bool>> DeleteUserAsync(Guid id);    
-        Task<bool> VerifyPassword(User user, string password);
     }
 }

@@ -4,6 +4,7 @@ using ParkingUZ.Application.Models;
 using ParkingUZ.Application.Services.Implement;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Application.Models.Reservation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ParkingUZ.API.Controllers
 {
@@ -17,12 +18,16 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpGet("GetById/{id}")]
+        [Authorize(Policy = "AdminOrCandidate")]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
             {
                 var responce = await _reservationService.GetByIdAsync(id);
-                return Ok(ApiResult<ReservationResponceModel>.Success(responce));
+                if (!responce.Succedded)
+                    return BadRequest(responce);
+
+                return Ok(responce);
             }
             catch (Exception ex)
             {
@@ -31,13 +36,18 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpGet("GetAll")]
+        [Authorize(Policy = "AdminOrCandidate")]
         public async Task<IActionResult> GetAll()
         {
             var responce = await _reservationService.GetAllAsync();
-            return Ok(ApiResult<IEnumerable<ReservationResponceModel>>.Success(responce));
+            if (!responce.Succedded)
+                return BadRequest(responce);
+
+            return Ok(responce);
         }
 
         [HttpPost("Create")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> Create(CreateReservationModel model)
         {
             if (!ModelState.IsValid)
@@ -46,7 +56,10 @@ namespace ParkingUZ.API.Controllers
             try
             {
                 var responce = await _reservationService.CreateAsync(model);
-                return Ok(ApiResult<CreateReservationResponceModel>.Success(responce));
+                if (!responce.Succedded)    
+                    return BadRequest(responce);
+
+                return Ok(responce);
             }
             catch (Exception ex)
             {
@@ -55,6 +68,7 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpPut("Update/{id:guid}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> UpdateAsync(Guid id, UpdateReservationModel model)
         {
             if (!ModelState.IsValid)
@@ -63,7 +77,10 @@ namespace ParkingUZ.API.Controllers
             try
             {
                 var res = await _reservationService.UpdateAsync(id, model);
-                return Ok(ApiResult<UpdateReservationResponceModel>.Success(res));
+                if(!res.Succedded)
+                    return BadRequest(res);
+
+                return Ok(res);
             }
             catch (Exception ex)
             {
@@ -72,12 +89,16 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpDelete("Delete/{id:guid}")]
+        [Authorize(Policy = "RequireAdminRole")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             try
             {
                 var responce = await _reservationService.DeleteAsync(id);
-                return Ok(ApiResult<bool>.Success(responce));
+                if (!responce.Succedded)    
+                    return BadRequest(responce);
+
+                return Ok(responce);
             }
             catch (Exception ex)
             {
