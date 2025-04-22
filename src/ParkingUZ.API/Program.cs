@@ -1,17 +1,7 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using ParkingUZ.API;
-using ParkingUZ.API.Filters;
-using ParkingUZ.API.Middleware;
 using ParkingUZ.DataAccess.Persistence;
-using System.Text;
-using ParkingUZ.Shared.Services.Impl;
-using ParkingUZ.Shared.Services;
 using ParkingUZ.DataAccess;
 using ParkingUZ.Application;
-using Microsoft.Extensions.Options;
-using ParkingUZ.Application.Helpers.GenerateJwt;
 using ParkingUZ.Application.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +11,7 @@ var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<stri
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddApplication(builder.Environment, builder.Configuration)

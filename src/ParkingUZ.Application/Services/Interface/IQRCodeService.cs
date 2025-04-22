@@ -1,5 +1,5 @@
 ﻿using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.QRCode;
+using ParkingUZ.Application.Models.QRCodeModel;
 
 namespace ParkingUZ.Application.Services.Interface
 {

@@ -1,5 +1,5 @@
 ﻿using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.ParkingZone;
+using ParkingUZ.Application.Models.ParkingZoneModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

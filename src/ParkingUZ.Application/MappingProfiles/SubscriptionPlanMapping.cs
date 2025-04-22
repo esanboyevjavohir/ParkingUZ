@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ParkingUZ.Application.Models.SubscriptionPlan;
+using ParkingUZ.Application.Models.SubscriptionPlanModel;
 using ParkingUZ.Core.Entities;
 
 namespace ParkingUZ.Application.MappingProfiles

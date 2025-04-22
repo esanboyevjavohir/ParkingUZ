@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ParkingUZ.Application.Models.Discount;
+using ParkingUZ.Application.Models.DiscountModel;
 using ParkingUZ.Core.Entities;
 
 namespace ParkingUZ.Application.MappingProfiles

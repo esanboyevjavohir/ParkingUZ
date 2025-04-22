@@ -4,9 +4,6 @@ using ParkingUZ.Application.Helpers.GenerateJwt;
 using ParkingUZ.Application.Models;
 using ParkingUZ.Application.Models.User;
 using ParkingUZ.Application.Services.Interface;
-using ParkingUZ.Core.Entities;
-using ParkingUZ.DataAccess;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace ParkingUZ.API.Controllers
 {

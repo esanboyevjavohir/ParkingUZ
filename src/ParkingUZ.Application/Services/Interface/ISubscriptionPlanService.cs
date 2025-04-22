@@ -1,5 +1,5 @@
 ﻿using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.SubscriptionPlan;
+using ParkingUZ.Application.Models.SubscriptionPlanModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ParkingUZ.Application.Models.ParkingZone;
+using ParkingUZ.Application.Models.ParkingZoneModel;
 using ParkingUZ.Core.Entities;
 
 namespace ParkingUZ.Application.MappingProfiles
@@ -12,7 +12,9 @@ namespace ParkingUZ.Application.MappingProfiles
 
             CreateMap<UpdateParkingZoneModel,  ParkingZone>().ReverseMap();
 
-            CreateMap<ParkingZone, ParkingZoneResponceModel>();
+            CreateMap<ParkingZone, ParkingZoneResponceModel>()
+                .ForMember(dest => dest.HasActiveDiscount, opt => opt.MapFrom(src => src.Discount != null 
+                    && src.Discount.IsActive));
         }
     }
 }

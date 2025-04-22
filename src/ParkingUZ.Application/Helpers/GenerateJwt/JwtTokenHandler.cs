@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using ParkingUZ.Application.Models.User;
 using ParkingUZ.Core.Entities;
-using ParkingUZ.DataAccess;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -33,7 +31,7 @@ namespace ParkingUZ.Application.Helpers.GenerateJwt
             var token = new JwtSecurityToken(
                 issuer: this.jwtOption.Issuer,
                 audience: this.jwtOption.Audience,
-                expires: DateTime.UtcNow.AddMinutes(this.jwtOption.ExpirationInMinutes),
+                expires: DateTime.Now.AddMinutes(this.jwtOption.ExpirationInMinutes),
                 claims: claims,
                 signingCredentials: new SigningCredentials(
                  key: authSigningKey,

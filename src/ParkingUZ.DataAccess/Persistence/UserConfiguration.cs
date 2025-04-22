@@ -30,6 +30,19 @@ namespace ParkingUZ.DataAccess.Persistence
             builder.HasData(GenerateUsers());
         }
 
+        public string Encrypt(string password, string salt)
+        {
+            using var algorithm = new Rfc2898DeriveBytes(
+                password: password,
+                salt: Encoding.UTF8.GetBytes(salt),
+                iterations: 1000,
+                hashAlgorithm: HashAlgorithmName.SHA256);
+
+            return Convert.ToBase64String(algorithm.GetBytes(32));
+        }
+
+        string salt = "5bd421f2-1e10-4dd9-81ff-e26c83e33b2f";
+
         private List<User> GenerateUsers() => new()
         {
             new User
@@ -39,8 +52,8 @@ namespace ParkingUZ.DataAccess.Persistence
                 Role = UserRole.Admin,
                 PhoneNumber = "+999999999111",
                 Email = "adminjon@gmail.com",
-                PasswordHash = "AKlJ3Kv+/m1pYHf4ZKL4iEoWm1d6BD8QKGrD4w5e2Go=",
-                Salt = "5bd421f2-1e10-4dd9-81ff-e26c83e33b2f"
+                PasswordHash = Encrypt("web@1234", salt),
+                Salt = salt
             }
         };
     }

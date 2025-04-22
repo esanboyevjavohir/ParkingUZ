@@ -2,8 +2,8 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.ParkingSubscription;
-using ParkingUZ.Application.Models.ParkingZone;
+using ParkingUZ.Application.Models.ParkingSubscriptionModel;
+using ParkingUZ.Application.Models.ParkingZoneModel;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Core.Entities;
 using ParkingUZ.DataAccess.Persistence;
@@ -70,6 +70,11 @@ namespace ParkingUZ.Application.Services.Implement
             {
                 return ApiResult<ParkingZoneResponceModel>.Failure(
                                 new List<string> { "ParkingZones not found" });
+            }
+
+            if(getById.HasActiveDiscount == true)
+            {
+                
             }
 
             return ApiResult<ParkingZoneResponceModel>.Success(getById);

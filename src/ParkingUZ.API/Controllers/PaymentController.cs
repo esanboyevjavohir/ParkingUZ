@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ParkingUZ.Application.Models.ParkingSubscription;
-using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Services.Implement;
 using ParkingUZ.Application.Services.Interface;
-using ParkingUZ.Application.Models.Payment;
+using ParkingUZ.Application.Models.PaymentModel;
 using Microsoft.AspNetCore.Authorization;
 
 namespace ParkingUZ.API.Controllers

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ParkingUZ.Application.Models.QRCode;
+using ParkingUZ.Application.Models.QRCodeModel;
 using ParkingUZ.Core.Entities;
 
 namespace ParkingUZ.Application.MappingProfiles

@@ -2,8 +2,8 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.QRCode;
-using ParkingUZ.Application.Models.Reservation;
+using ParkingUZ.Application.Models.QRCodeModel;
+using ParkingUZ.Application.Models.ReservationModel;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Core.Entities;
 using ParkingUZ.DataAccess.Persistence;

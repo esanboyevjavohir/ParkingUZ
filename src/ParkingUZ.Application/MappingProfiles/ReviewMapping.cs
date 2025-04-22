@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ParkingUZ.Application.Models.Review;
+using ParkingUZ.Application.Models.ReviewModel;
 using ParkingUZ.Core.Entities;
 
 namespace ParkingUZ.Application.MappingProfiles

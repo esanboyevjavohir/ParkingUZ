@@ -1,26 +1,18 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FluentValidation;
-using MediaBrowser.Model.Logging;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ParkingUZ.Application.DataTransferObject.Authentication;
 using ParkingUZ.Application.Helpers;
 using ParkingUZ.Application.Helpers.GenerateJwt;
 using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.Discount;
-using ParkingUZ.Application.Models.ParkingSpot;
 using ParkingUZ.Application.Models.User;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Core.Entities;
 using ParkingUZ.Core.Enums;
-using ParkingUZ.Core.UserResponse;
-using ParkingUZ.DataAccess;
 using ParkingUZ.DataAccess.Persistence;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace ParkingUZ.Application.Services.Implement
 {
@@ -332,8 +324,10 @@ namespace ParkingUZ.Application.Services.Implement
             var accessToken = _jwtTokenHandler.GenerateAccesToken(user);
             var refreshToken = _jwtTokenHandler.GenerateRefreshToken();
 
+            user.CreatedOn = DateTime.Now;
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpireDate = DateTime.Now.AddDays(_userSettings.RefreshTokenExpirationDays);
+            await _dataBaseContext.SaveChangesAsync();
 
             return ApiResult<LoginResponseModel>.Success(new LoginResponseModel
             {

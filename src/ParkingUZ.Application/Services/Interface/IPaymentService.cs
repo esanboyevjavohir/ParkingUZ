@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.Payment;
+using ParkingUZ.Application.Models.PaymentModel;
 
 namespace ParkingUZ.Application.Services.Interface
 {

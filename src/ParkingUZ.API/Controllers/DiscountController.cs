@@ -1,8 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.Discount;
+using ParkingUZ.Application.Models.DiscountModel;
 using ParkingUZ.Application.Services.Interface;
 
 namespace ParkingUZ.API.Controllers

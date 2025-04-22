@@ -1,5 +1,5 @@
 ﻿using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.Reservation;
+using ParkingUZ.Application.Models.ReservationModel;
 
 namespace ParkingUZ.Application.Services.Interface
 {

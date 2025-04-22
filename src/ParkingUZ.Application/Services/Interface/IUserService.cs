@@ -17,7 +17,6 @@ namespace ParkingUZ.Application.Services.Interface
         Task<ApiResult<bool>> SendOtpCode(Guid userId);
         Task<ApiResult<bool>> ResendOtpCode(Guid userId);
         Task<ApiResult<bool>> VerifyOtpCode(string code, Guid userId);
-        //Task<User> UpdateUserAsync(Guid id, UpdateUserDTO updateUserDTO);
         Task<ApiResult<LoginResponseModel>> LoginAsync(LoginUserModel loginDTO);
         Task<ApiResult<string>> ValidateAndRefreshToken(Guid id, string refreshToken);
         Task<ApiResult<bool>> ForgotPasswordAsync(string email);

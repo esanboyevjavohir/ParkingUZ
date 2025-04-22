@@ -1,5 +1,5 @@
 ﻿using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.Discount;
+using ParkingUZ.Application.Models.DiscountModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

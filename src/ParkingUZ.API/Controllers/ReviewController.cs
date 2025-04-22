@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ParkingUZ.Application.Models.QRCode;
-using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Services.Implement;
 using ParkingUZ.Application.Services.Interface;
-using ParkingUZ.Application.Models.Review;
+using ParkingUZ.Application.Models.ReviewModel;
 using Microsoft.AspNetCore.Authorization;
 
 namespace ParkingUZ.API.Controllers

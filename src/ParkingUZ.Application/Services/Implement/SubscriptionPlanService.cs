@@ -2,8 +2,8 @@
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using ParkingUZ.Application.Models;
-using ParkingUZ.Application.Models.Review;
-using ParkingUZ.Application.Models.SubscriptionPlan;
+using ParkingUZ.Application.Models.ReviewModel;
+using ParkingUZ.Application.Models.SubscriptionPlanModel;
 using ParkingUZ.Application.Services.Interface;
 using ParkingUZ.Core.Entities;
 using ParkingUZ.DataAccess.Persistence;

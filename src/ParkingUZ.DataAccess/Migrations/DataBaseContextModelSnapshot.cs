@@ -190,32 +190,10 @@ namespace ParkingUZ.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParkingZoneId");
+                    b.HasIndex("ParkingZoneId")
+                        .IsUnique();
 
                     b.ToTable("Discounts");
-                });
-
-            modelBuilder.Entity("ParkingUZ.Core.Entities.GeoLocation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("UpdatedOn")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<decimal>("XCoordinate")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("YCoordinate")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("GeoLocation");
                 });
 
             modelBuilder.Entity("ParkingUZ.Core.Entities.OtpCode", b =>
@@ -307,9 +285,6 @@ namespace ParkingUZ.DataAccess.Migrations
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<Guid>("GeoLocationId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -322,10 +297,13 @@ namespace ParkingUZ.DataAccess.Migrations
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp without time zone");
 
-                    b.HasKey("Id");
+                    b.Property<decimal>("XCoordinate")
+                        .HasColumnType("numeric");
 
-                    b.HasIndex("GeoLocationId")
-                        .IsUnique();
+                    b.Property<decimal>("YCoordinate")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
 
                     b.ToTable("ParkingZones");
                 });
@@ -558,7 +536,7 @@ namespace ParkingUZ.DataAccess.Migrations
                             Id = new Guid("bc56836e-0345-4f01-a883-47f39e32e079"),
                             Email = "adminjon@gmail.com",
                             Name = "Adminjon Adminov",
-                            PasswordHash = "AKlJ3Kv+/m1pYHf4ZKL4iEoWm1d6BD8QKGrD4w5e2Go=",
+                            PasswordHash = "rnepir3rYfFzHXIt56HwVh8AnTUrmsrjIQs8j5mVlDw=",
                             PhoneNumber = "+999999999111",
                             Role = 1,
                             Salt = "5bd421f2-1e10-4dd9-81ff-e26c83e33b2f"
@@ -683,8 +661,8 @@ namespace ParkingUZ.DataAccess.Migrations
             modelBuilder.Entity("ParkingUZ.Core.Entities.Discount", b =>
                 {
                     b.HasOne("ParkingUZ.Core.Entities.ParkingZone", "ParkingZone")
-                        .WithMany()
-                        .HasForeignKey("ParkingZoneId")
+                        .WithOne("Discount")
+                        .HasForeignKey("ParkingUZ.Core.Entities.Discount", "ParkingZoneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -730,17 +708,6 @@ namespace ParkingUZ.DataAccess.Migrations
                     b.Navigation("ParkingZone");
 
                     b.Navigation("SubscriptionPlan");
-                });
-
-            modelBuilder.Entity("ParkingUZ.Core.Entities.ParkingZone", b =>
-                {
-                    b.HasOne("ParkingUZ.Core.Entities.GeoLocation", "GeoLocation")
-                        .WithOne("ParkingZone")
-                        .HasForeignKey("ParkingUZ.Core.Entities.ParkingZone", "GeoLocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GeoLocation");
                 });
 
             modelBuilder.Entity("ParkingUZ.Core.Entities.Payment", b =>
@@ -809,9 +776,9 @@ namespace ParkingUZ.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ParkingUZ.Core.Entities.GeoLocation", b =>
+            modelBuilder.Entity("ParkingUZ.Core.Entities.ParkingZone", b =>
                 {
-                    b.Navigation("ParkingZone");
+                    b.Navigation("Discount");
                 });
 
             modelBuilder.Entity("ParkingUZ.Core.Entities.User", b =>
