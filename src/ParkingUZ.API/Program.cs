@@ -3,6 +3,7 @@ using ParkingUZ.DataAccess.Persistence;
 using ParkingUZ.DataAccess;
 using ParkingUZ.Application;
 using ParkingUZ.Application.Helpers;
+using Telegram.Bot;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,8 +51,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
-//namespace ParkingUZ.API
-//{
-//    public partial class Program { }
-//}
