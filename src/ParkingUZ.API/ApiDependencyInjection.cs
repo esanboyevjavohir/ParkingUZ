@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ParkingUZ.API.BotModels;
 using ParkingUZ.Application.Helpers.GenerateJwt;
 using System.Text;
+using Telegram.Bot;
 
 namespace ParkingUZ.API
 {
@@ -34,8 +36,14 @@ namespace ParkingUZ.API
               });
         }
 
+        public static BotConfiguration botConfig { get; }
+
         public static void AddSwagger(this IServiceCollection services)
         {
+            //services.AddHttpClient("tgwebhook")
+            //    .AddTypedClient<ITelegramBotClient>(httpClient =>
+            //    new TelegramBotClient());
+
             services.AddSwaggerGen(s =>
             {
                 s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

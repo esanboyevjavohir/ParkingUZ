@@ -1,6 +1,7 @@
 ﻿
 using ParkingUZ.API.BotModels;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 
 namespace ParkingUZ.API.WebHookService
 {
@@ -28,11 +29,28 @@ namespace ParkingUZ.API.WebHookService
             var webhookAddress = $@"{_botConfig.HostAddress}/bot/{_botConfig.Token}";
 
             _logger.LogInformation("Setting webhook");
+
+            await botClient.SendMessage(
+                chatId: 694317856,
+                text: "Webhook o'rnatilmoqda");
+
+            await botClient.SetWebhook(
+                url: webhookAddress,
+                allowedUpdates: Array.Empty<UpdateType>(),
+                cancellationToken: cancellationToken);
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            using var scope = _serviceProvider.CreateScope();
+
+            var botClient = scope.ServiceProvider.GetRequiredService<ITelegramBotClient>();
+
+            _logger.LogInformation("Webhook removing");
+
+            await botClient.SendMessage(
+                chatId: 694317856,
+                text: "Bot uxlamoqda");
         }
     }
 }

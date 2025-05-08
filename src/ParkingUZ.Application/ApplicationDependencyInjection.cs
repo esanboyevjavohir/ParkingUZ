@@ -49,6 +49,7 @@ namespace ParkingUZ.Application
             services.AddScoped<ISubscriptionPlanService, SubscriptionPlanService>();
             services.AddScoped<IValidator<CreateUserModel>, UserForCreationDtoValidator>();
             services.AddScoped<IValidator<ResetPasswordModel>, ResetPasswordValidator>();
+            services.AddScoped<HandleBotService>();
         }
 
         private static void RegisterAutoMapper(this IServiceCollection services)
