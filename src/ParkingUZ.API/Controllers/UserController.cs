@@ -17,7 +17,7 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpPost("Registration")]
-        public async Task<ActionResult<CreateUserResponseModel>> UserSignUpAsync(CreateUserModel createUserModel)
+        public async Task<ActionResult<CreateUserResponseModel>> UserSignUpAsync([FromForm] CreateUserModel createUserModel)
         {
             var create = await _userService.SignUpAsync(createUserModel);
             if (!create.Succedded)
@@ -73,7 +73,7 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpPost("Reset-Password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
+        public async Task<IActionResult> ResetPassword([FromForm] ResetPasswordModel model)
         {
             var result = await _userService.ResetPasswordAsync(model);
             if (!result.Succedded)

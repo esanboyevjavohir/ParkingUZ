@@ -16,7 +16,7 @@ var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<stri
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
 
@@ -33,7 +33,7 @@ builder.Services.AddApplication(builder.Environment, builder.Configuration)
                 .AddDataAccess(builder.Configuration);
 
 builder.Services.AddAuth(builder.Configuration);
-//builder.Services.AddSwagger();
+builder.Services.AddSwagger();
 
 builder.Services.AddCors(options =>
 {
@@ -51,8 +51,8 @@ using var scope = app.Services.CreateScope();
 
 await AutomatedMigration.MigrateAsync(scope.ServiceProvider);
 
-//app.UseSwagger();
-//app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

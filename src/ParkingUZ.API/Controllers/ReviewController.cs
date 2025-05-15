@@ -45,7 +45,7 @@ namespace ParkingUZ.API.Controllers
 
         [HttpPost("Create")]
         [Authorize(Policy = "RequireAdminRole")]
-        public async Task<IActionResult> Create(CreateReviewModel model)
+        public async Task<IActionResult> Create([FromForm] CreateReviewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
