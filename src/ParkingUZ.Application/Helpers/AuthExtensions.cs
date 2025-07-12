@@ -13,6 +13,7 @@ namespace ParkingUZ.Application.Helpers
         public static IServiceCollection AddAuth(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
             var authOptions = configuration.GetSection("JwtSettings").Get<JwtOption>();
+            var secretKey = Encoding.UTF8.GetBytes(authOptions!.SecretKey);
 
             serviceCollection.AddAuthentication(options =>
             {
@@ -20,9 +21,9 @@ namespace ParkingUZ.Application.Helpers
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddJwtBearer(o =>
+                .AddJwtBearer(x =>
                 {
-                    o.TokenValidationParameters = new TokenValidationParameters
+                    x.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
@@ -31,7 +32,7 @@ namespace ParkingUZ.Application.Helpers
 
                         ValidIssuer = authOptions.Issuer,
                         ValidAudience = authOptions.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.SecretKey))
+                        IssuerSigningKey = new SymmetricSecurityKey(secretKey)
                     };
                 });
 

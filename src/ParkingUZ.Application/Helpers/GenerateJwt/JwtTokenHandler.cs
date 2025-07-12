@@ -22,7 +22,7 @@ namespace ParkingUZ.Application.Helpers.GenerateJwt
             {
                 new Claim(CustomClaimNames.Id , user.Id.ToString()),
                 new Claim(CustomClaimNames.Email, user.Email),
-                new Claim(CustomClaimNames.Role , user.Role.ToString()),
+                new Claim(CustomClaimNames.Role , user.Role.ToString())
             };
 
             var authSigningKey = new SymmetricSecurityKey(
@@ -35,7 +35,7 @@ namespace ParkingUZ.Application.Helpers.GenerateJwt
                 claims: claims,
                 signingCredentials: new SigningCredentials(
                  key: authSigningKey,
-                 algorithm: SecurityAlgorithms.HmacSha256)
+                 algorithm: SecurityAlgorithms.HmacSha256Signature)
                 );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
@@ -60,7 +60,7 @@ namespace ParkingUZ.Application.Helpers.GenerateJwt
                 claims: claims,
                 signingCredentials: new SigningCredentials(
                  key: authSigningKey,
-                 algorithm: SecurityAlgorithms.HmacSha256)
+                 algorithm: SecurityAlgorithms.HmacSha256Signature)
                 );
             return new JwtSecurityTokenHandler().WriteToken(jwtToken);
         }
