@@ -9,7 +9,7 @@ namespace ParkingUZ.Application.MappingProfiles
         public ParkingSpotMapping()
         {
             CreateMap<CreateParkingSpotModel, ParkingSpot>();
-
+    
             CreateMap<UpdateParkingSpotModel, ParkingSpot>().ReverseMap();
 
             CreateMap<ParkingSpot, ParkingSpotResponceModel>();

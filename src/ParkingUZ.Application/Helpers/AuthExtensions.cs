@@ -23,6 +23,8 @@ namespace ParkingUZ.Application.Helpers
             })
                 .AddJwtBearer(x =>
                 {
+                    x.RequireHttpsMetadata = false;
+                    x.SaveToken = true;
                     x.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
@@ -32,7 +34,10 @@ namespace ParkingUZ.Application.Helpers
 
                         ValidIssuer = authOptions.Issuer,
                         ValidAudience = authOptions.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+                        IssuerSigningKey = new SymmetricSecurityKey(secretKey),
+
+                        RoleClaimType = CustomClaimNames.Role,
+                        NameClaimType = CustomClaimNames.Id
                     };
                 });
 
