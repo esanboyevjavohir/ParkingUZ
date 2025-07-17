@@ -27,11 +27,21 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ApiResult<LoginResponseModel>> UserLoginAsync(LoginUserModel loginUserModel)
+        public async Task<IActionResult> UserLoginAsync(LoginUserModel loginUserModel)
         {
             var result = await _userService.LoginAsync(loginUserModel);
 
-            return result;
+            if(!result.Succedded)
+            {
+                if (result.Errors.Contains("User not found"))
+                    return NotFound(result);
+                if (result.Errors.Contains("Invalid password"))
+                    return Unauthorized(result);
+
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("ValidateAndRefreshToken")]
@@ -42,10 +52,22 @@ namespace ParkingUZ.API.Controllers
         }
 
         [HttpPost("SendOtpCode")]
-        public async Task<ApiResult<bool>> SendOtpCodeAsync(Guid userId)
+        public async Task<IActionResult> SendOtpCodeAsync(Guid userId)
         {
             var result = await _userService.SendOtpCode(userId);
-            return result;
+
+            if (!result.Succedded)
+            {
+                if (result.Errors.Contains("User not found"))
+                    return NotFound(result); 
+
+                if (result.Errors.Contains("Failed to send OTP email"))
+                    return StatusCode(500, result); 
+
+                return BadRequest(result); 
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("ResendOtpCode")]

@@ -6,7 +6,7 @@ namespace ParkingUZ.Core.Entities
     public class OtpCode : BaseEntity
     {
         public OtpCode() { }
-        public string Code { get; set; } = null;
+        public string Code { get; set; } = null!;
         public DateTimeOffset CreatedAt { get; } = DateTimeOffset.Now;
         public OtpCodeStatus Status { get; set; }
 

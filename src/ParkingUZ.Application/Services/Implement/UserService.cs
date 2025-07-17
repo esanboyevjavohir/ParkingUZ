@@ -248,7 +248,7 @@ namespace ParkingUZ.Application.Services.Implement
         {
             var user = await _dataBaseContext.User.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
-            {
+            { 
                 return ApiResult<bool>.Failure(new List<string> { "User not found" });
             }
 

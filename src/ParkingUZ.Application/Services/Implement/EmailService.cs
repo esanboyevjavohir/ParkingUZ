@@ -11,7 +11,7 @@ namespace ParkingUZ.Application.Services.Implement
             try
             {
                 var bussinessMail = "javohiresanboyev053@gmail.com";
-                var pass = "zdie hwjw rtcj tspg";
+                var pass = "okpp jzam qffm xhlo";
                 var client = new SmtpClient("smtp.gmail.com", 587)
                 {
                     EnableSsl = true,
